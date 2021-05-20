@@ -1,0 +1,5 @@
+// controller request mapping
+// service business logic (글 추가, 글 삭제, 댓글 추가 등)
+// repository (findOne, Clear 등)
+// model
+으로 나눠서 구현
