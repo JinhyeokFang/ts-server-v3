@@ -26,4 +26,12 @@ gulp.task("devBuild", function () {
         .pipe(gulp.dest("dist"));
 })
 
+gulp.task("lint", function () {
+    return tsProject.src()
+        .pipe(eslint({fix: true}))
+        .pipe(eslint.format())
+        .pipe(gulp.dest(file => file.base))
+        .pipe(eslint.failAfterError())
+})
+
 gulp.task("default", gulp.series("build"));
