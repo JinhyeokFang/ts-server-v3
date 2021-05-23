@@ -2,16 +2,16 @@ import {
   Schema, model, Model, Document,
 } from 'mongoose';
 
-interface IUserModel extends Document {
+interface IPostModel extends Document {
     username: string;
     password: string;
 }
 
-const userSchema = new Schema({
+const postSchema = new Schema({
   username: String,
   password: String,
 });
 
-const UserModel: Model<IUserModel> = model('user', userSchema);
+const PostModel: Model<IPostModel> = model('post', postSchema);
 
-export { UserModel, IUserModel };
+export { PostModel, IPostModel };

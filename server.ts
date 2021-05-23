@@ -22,7 +22,7 @@ const port = process.env.PORT || 8080;
 Crypto.setKey(process.env.KEY || '');
 DB.initialize(dbName);
 
-app.use(morgan('combined', { stream: Logger.stream }));
+app.use(morgan('combined', { write: Logger.info }));
 
 app.use(compression());
 app.use(helmet());

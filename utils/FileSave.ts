@@ -2,8 +2,6 @@ import { Request } from 'express';
 import multer from 'multer';
 import path from 'path';
 
-// import config from '../config';
-
 export default multer({
   storage: multer.diskStorage({
     destination: (req: Request, file,

@@ -4,3 +4,6 @@ node_modules
 typings
 dist
 npm-debug.log
+logs
+files
+todo

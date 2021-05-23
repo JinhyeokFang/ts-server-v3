@@ -1,8 +1,11 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 
 import { BaseController } from '../BaseController';
 import { JWT, TokenStatus } from '../../utils/JWT';
-import { LoginRequest } from './IAuthController';
+import {
+  LoginRequest, RegisterRequest, ReloginRequest, TokenDataRequest,
+} from './IAuthController';
+import UserService from '../../services/User/UserService';
 
 export class AuthController extends BaseController {
   public constructor() {
@@ -17,6 +20,8 @@ export class AuthController extends BaseController {
     const { username, password } = req.body;
 
     try {
+      await UserService.getInstance().createUser(username, password);
+
       super.ResponseSuccess(res, {
         data: {
           accessToken: JWT.createAccessToken({ username }),
@@ -32,7 +37,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  private async register(req: Request, res: Response): Promise<void> {
+  private async register(req: RegisterRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
     try {
@@ -47,7 +52,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  private async relogin(req: Request, res: Response): Promise<void> {
+  private async relogin(req: ReloginRequest, res: Response): Promise<void> {
     const { refreshToken } = req.body;
 
     const result = JWT.checkRefreshToken(refreshToken);
@@ -65,7 +70,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  private async tokenData(req: Request, res: Response): Promise<void> {
+  private async tokenData(req: TokenDataRequest, res: Response): Promise<void> {
     const { token } = req.body;
 
     const tokenObject = JWT.decodeToken(token);
