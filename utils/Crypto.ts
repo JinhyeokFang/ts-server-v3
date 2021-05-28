@@ -2,11 +2,6 @@ import {
   createCipheriv, createDecipheriv, Cipher, Decipher, randomBytes, pbkdf2,
 } from 'crypto';
 
-interface HashOutput {
-  hashedValue: string,
-  key: string
-}
-
 export default class Crypto {
   public static key: string;
 
@@ -48,11 +43,11 @@ export default class Crypto {
     });
   }
 
-  public static async hash(value: string, saltKey: string): Promise<HashOutput> {
+  public static async hash(value: string, saltKey: string): Promise<string> {
     return new Promise((resolve, reject) => {
       pbkdf2(value, saltKey, 8282, 64, 'sha512', (err, key) => {
         if (err) reject(err);
-        else resolve({ hashedValue: key.toString('base64'), key: saltKey });
+        else resolve(key.toString('base64'));
       });
     });
   }

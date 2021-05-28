@@ -4,6 +4,7 @@
 // editUser
 
 import { UserModel } from '../../models/User/UserModel';
+import Crypto from '../../utils/Crypto';
 import Logger from '../../utils/Logger';
 
 export default class UserService {
@@ -32,7 +33,10 @@ export default class UserService {
    */
   public async createUser(username: string, password: string): Promise<boolean> {
     try {
-      await UserModel.create({ username, password });
+      const key: string = await Crypto.createKey();
+      const encryptedPassword: string = await Crypto.hash(password, key);
+      const iv: Buffer = await Crypto.createIV();
+      await UserModel.create({ username, password: encryptedPassword, key, iv });
       return true;
     } catch (error) {
       Logger.error(error);

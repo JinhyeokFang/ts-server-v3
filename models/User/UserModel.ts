@@ -7,6 +7,7 @@ interface IUserModel extends Document {
   password: string;
   profileImageURL: string;
   iv: string;
+  key: string;
 }
 
 const userSchema = new Schema({
