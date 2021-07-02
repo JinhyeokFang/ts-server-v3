@@ -4,8 +4,10 @@ import { BaseController } from '../BaseController';
 import { JWT, TokenStatus } from '../../utils/JWT';
 import {
   LoginRequest, RegisterRequest, ReloginRequest, TokenDataRequest,
-} from './IAuthController';
+} from './AuthController.interface';
 import UserService from '../../services/User/UserService';
+import { CreateUserResult } from '../../services/User/UserService.enum';
+import Logger from '../../utils/Logger';
 
 export class AuthController extends BaseController {
   public constructor() {
@@ -20,14 +22,13 @@ export class AuthController extends BaseController {
     const { username, password } = req.body;
 
     try {
-      await UserService.getInstance().createUser(username, password);
 
-      super.ResponseSuccess(res, {
-        data: {
-          accessToken: JWT.createAccessToken({ username }),
-          refreshToken: JWT.createRefreshToken({ username }),
-        },
-      });
+      // super.ResponseSuccess(res, {
+      //   data: {
+      //     accessToken: JWT.createAccessToken({ username }),
+      //     refreshToken: JWT.createRefreshToken({ username }),
+      //   },
+      // });
     } catch (error) {
       // if () {
       //     super.ResponseNotFound(res, { error: "User Not Found" });
@@ -41,14 +42,18 @@ export class AuthController extends BaseController {
     const { username, password } = req.body;
 
     try {
+      await UserService.getInstance().createUser(username, password);
       super.ResponseSuccess(res, {});
     } catch (error) {
-      // if () {
-      //     super.ResponseForbidden(res, { errorMessage: "User Already Exist" });
-      // } else {
-      //     super.ResponseInternalServerError(res,
-      // { errorMessage: "DB Error", meesage: error.message });
-      // }
+      switch (error) {
+        case CreateUserResult.AlreadyExist:
+          super.ResponseConflict(res, { errorMessage: 'User Already Exist' });
+          break;
+        default:
+          super.ResponseInternalServerError(res, { errorMessage: 'Server Error' });
+          Logger.error(error);
+          break;
+      }
     }
   }
 

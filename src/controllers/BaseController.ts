@@ -37,6 +37,10 @@ export abstract class BaseController {
     res.status(404).json(body);
   }
 
+  protected ResponseConflict(res: Response, body: ResponseFailedBody): void {
+    res.status(409).json(body);
+  }
+
   protected ResponseImATeaPot(res: Response, body: ResponseFailedBody): void {
     res.status(418).json(body);
   }

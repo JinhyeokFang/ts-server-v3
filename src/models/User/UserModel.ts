@@ -14,7 +14,7 @@ const userSchema = new Schema({
   username: String,
   password: String,
   profileImageURL: String,
-  iv: String
+  iv: String,
 });
 
 const UserModel: Model<IUserModel> = model('user', userSchema);
