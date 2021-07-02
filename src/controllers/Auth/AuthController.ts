@@ -6,7 +6,7 @@ import {
   LoginRequest, RegisterRequest, ReloginRequest, TokenDataRequest,
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
-import { CreateUserResult } from '../../services/User/UserService.enum';
+import { CreateUserResult, LoginUserResult } from '../../services/User/UserService.enum';
 import Logger from '../../utils/Logger';
 
 export class AuthController extends BaseController {
@@ -22,19 +22,23 @@ export class AuthController extends BaseController {
     const { username, password } = req.body;
 
     try {
-
-      // super.ResponseSuccess(res, {
-      //   data: {
-      //     accessToken: JWT.createAccessToken({ username }),
-      //     refreshToken: JWT.createRefreshToken({ username }),
-      //   },
-      // });
+      await UserService.getInstance().loginUser(username, password);
+      super.ResponseSuccess(res, {
+        data: {
+          accessToken: JWT.createAccessToken({ username }),
+          refreshToken: JWT.createRefreshToken({ username }),
+        },
+      });
     } catch (error) {
-      // if () {
-      //     super.ResponseNotFound(res, { error: "User Not Found" });
-      // } else {
-      //     super.ResponseInternalServerError(res, { error: "DB Error", meesage: error.message });
-      // }
+      switch (error) {
+        case LoginUserResult.NotFound:
+          super.ResponseNotFound(res, { errorMessage: 'User Not Found' });
+          break;
+        default:
+          super.ResponseInternalServerError(res, { errorMessage: 'Server Error' });
+          Logger.error(error);
+          break;
+      }
     }
   }
 
