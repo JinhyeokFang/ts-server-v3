@@ -14,6 +14,7 @@ export class AuthController extends BaseController {
     super();
     this.router.post('/login', this.login);
     this.router.post('/register', this.register);
+    this.router.delete('/remove', this.remove);
     this.router.post('/relogin', this.relogin);
     this.router.post('/tokenCheck', this.tokenData);
   }
@@ -52,6 +53,28 @@ export class AuthController extends BaseController {
       switch (error) {
         case CreateUserResult.AlreadyExist:
           super.ResponseConflict(res, { errorMessage: 'User Already Exist' });
+          break;
+        default:
+          super.ResponseInternalServerError(res, { errorMessage: 'Server Error' });
+          Logger.error(error);
+          break;
+      }
+    }
+  }
+
+  private async remove(req: RegisterRequest, res: Response): Promise<void> {
+    const { username, password } = req.body;
+
+    try {
+      await UserService.getInstance().removeUser(username, password);
+      super.ResponseSuccess(res, {});
+    } catch (error) {
+      switch (error) {
+        case RemoveUser.NotFound:
+          super.ResponseNotFound(res, { errorMessage: 'User Not Found' });
+          break;
+        case RemoveUser.PasswordIncorrect:
+          super.ResponseForbidden(res, { errorMessage: 'Password Incorrect' });
           break;
         default:
           super.ResponseInternalServerError(res, { errorMessage: 'Server Error' });

@@ -73,4 +73,30 @@ export default class UserService {
     }
     return LoginUserResult.Success;
   }
+
+  /**
+   * 유저 삭제
+   * @param  {string} username
+   * @param  {string} password
+   * @returns  {RemoveUserResult}
+   */
+  public async RemoveUser(username: string, password: string): Promise<RemoveUserResult> {
+    // 이미 존재하는 유저인지 확인
+    const userInstance = await UserModel.findOne({
+      username,
+    });
+    if (!userInstance) {
+      throw LoginUserResult.NotFound;
+    }
+
+    // 입력한 비밀번호 해시화 후 비교
+    const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
+    if (encryptedPassword !== userInstance.password) {
+      throw LoginUserResult.PasswordIncorrect;
+    }
+
+    // 삭제
+    userInstance.remove();
+    return LoginUserResult.Success;
+  }
 }

@@ -9,3 +9,10 @@ export enum LoginUserResult {
   NotFound,
   ServerError
 }
+
+export enum RemoveUserResult {
+  Success,
+  NotFound,
+  PasswordIncorrect,
+  ServerError
+}
