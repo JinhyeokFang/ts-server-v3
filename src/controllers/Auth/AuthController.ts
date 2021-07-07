@@ -43,6 +43,7 @@ export class AuthController extends BaseController {
     }
   }
 
+  //TODO: 이미지 프로필 자동 추가 + editUserInformation
   private async register(req: RegisterRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
@@ -62,7 +63,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  private async remove(req: RegisterRequest, res: Response): Promise<void> {
+  private async remove(req: RemoveRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
     try {

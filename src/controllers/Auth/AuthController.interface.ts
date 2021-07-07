@@ -14,6 +14,13 @@ export interface RegisterRequest extends Request {
     }
 }
 
+export interface RemoveRequest extends Request {
+    body: {
+        username: string,
+        password: string
+    }
+}
+
 export interface ReloginRequest extends Request {
     body: {
         refreshToken: string
