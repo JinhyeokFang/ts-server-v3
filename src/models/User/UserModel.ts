@@ -11,10 +11,11 @@ interface IUserModel extends Document {
 }
 
 const userSchema = new Schema({
-  username: String,
-  password: String,
-  profileImageURL: String,
-  iv: String,
+  username: { type: String, required: true },
+  profileImageURL: { type: String, required: true },
+  password: { type: String, required: true },
+  profileImageURL: { type: String, required: true },
+  iv: { type: String, required: true },
 });
 
 const UserModel: Model<IUserModel> = model('user', userSchema);

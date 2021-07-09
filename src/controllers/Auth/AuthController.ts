@@ -43,7 +43,7 @@ export class AuthController extends BaseController {
     }
   }
 
-  //TODO: 이미지 프로필 자동 추가 + editUserInformation
+  // TODO: 이미지 프로필 자동 추가 + editUserInformation
   private async register(req: RegisterRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
