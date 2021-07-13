@@ -6,7 +6,7 @@
 import { UserModel } from '../../models/User/UserModel';
 import Crypto from '../../utils/Crypto';
 import Logger from '../../utils/Logger';
-import { CreateUserResult, LoginUserResult } from './UserService.enum';
+import { CreateUserResult, LoginUserResult, RemoveUserResult } from './UserService.enum';
 
 export default class UserService {
   private static instance: UserService;
@@ -80,23 +80,23 @@ export default class UserService {
    * @param  {string} password
    * @returns  {RemoveUserResult}
    */
-  public async RemoveUser(username: string, password: string): Promise<RemoveUserResult> {
+  public async removeUser(username: string, password: string): Promise<RemoveUserResult> {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,
     });
     if (!userInstance) {
-      throw LoginUserResult.NotFound;
+      throw RemoveUserResult.NotFound;
     }
 
     // 입력한 비밀번호 해시화 후 비교
     const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
     if (encryptedPassword !== userInstance.password) {
-      throw LoginUserResult.PasswordIncorrect;
+      throw RemoveUserResult.PasswordIncorrect;
     }
 
     // 삭제
     userInstance.remove();
-    return LoginUserResult.Success;
+    return RemoveUserResult.Success;
   }
 }
