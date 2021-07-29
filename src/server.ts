@@ -7,8 +7,8 @@ import cors from 'cors';
 
 import DB from './db';
 
-import IndexRoute from './controllers/Index/IndexController';
-import AuthRoute from './controllers/Auth/AuthController';
+import IndexController from './controllers/Index/IndexController';
+import AuthController from './controllers/Auth/AuthController';
 import Crypto from './utils/Crypto';
 import Logger from './utils/Logger';
 
@@ -16,11 +16,11 @@ const app: express.Application = express();
 
 dotenv.config();
 
-const dbName = process.env.DB_NAME || 'dbdb';
 const port = process.env.PORT || 8080;
 
 Crypto.setKey(process.env.KEY || '');
-DB.initialize(dbName);
+DB.initialize(process.env.DB_NAME || 'dbdb', 27017, process.env.DB_HOST);
+// TODO: env에서 포트 불러오는 거로 교체 필요
 
 app.use(morgan('combined', { write: Logger.info }));
 
@@ -33,8 +33,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('./static'));
 
-app.use('/', IndexRoute);
-app.use('/auth', AuthRoute);
+app.use('/', new IndexController().router);
+app.use('/auth', new AuthController().router);
 
 app.set('views', './views');
 app.set('view engine', 'ejs');

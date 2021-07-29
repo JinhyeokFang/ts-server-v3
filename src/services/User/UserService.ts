@@ -3,10 +3,9 @@
 // removeUser
 // editUser
 
+import { NotFoundError, ConflictError } from 'ts-response';
 import { UserModel } from '../../models/User/UserModel';
 import Crypto from '../../utils/Crypto';
-import { ConflictError } from '../../utils/httpResponse/ResponseConflict';
-import { NotFoundError } from '../../utils/httpResponse/ResponseNotFound';
 import Logger from '../../utils/Logger';
 
 export default class UserService {
@@ -62,13 +61,13 @@ export default class UserService {
       username,
     });
     if (!userInstance) {
-      throw new NotFoundError("유저를 찾을 수 없습니다.");
+      throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
 
     // 입력한 비밀번호 해시화 후 비교
     const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
     if (encryptedPassword !== userInstance.password) {
-      throw new NotFoundError("유저를 찾을 수 없습니다.");
+      throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
   }
 
@@ -84,13 +83,13 @@ export default class UserService {
       username,
     });
     if (!userInstance) {
-      throw new NotFoundError("유저를 찾을 수 없습니다.");
+      throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
 
     // 입력한 비밀번호 해시화 후 비교
     const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
     if (encryptedPassword !== userInstance.password) {
-      throw new NotFoundError("유저를 찾을 수 없습니다.");
+      throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
 
     // 삭제

@@ -9,6 +9,7 @@ export interface TokenData {
 
 export default class JWT {
   private static privateKey = fs.readFileSync('private.key');
+  // TODO: .env에서 가져오는 것으로 변경
 
   public static async sign(isAccessToken: boolean, username: string): Promise<string> {
     const tokenData: TokenData = {
@@ -41,13 +42,13 @@ export default class JWT {
     try {
       const data: TokenData = await JWT.verify(token);
       if (!data.isAccessToken) {
-        res.status(401).send({ success: false, message: 'AccessToken만 가능합니다.'});
+        res.status(401).send({ success: false, message: 'AccessToken만 가능합니다.' });
         return;
       }
       res.locals.username = data.username;
       next();
     } catch (err) {
-      res.status(401).send({ success: false, message: '잘못되었거나 만료된 토큰입니다.'});
+      res.status(401).send({ success: false, message: '잘못되었거나 만료된 토큰입니다.' });
     }
   }
 }
