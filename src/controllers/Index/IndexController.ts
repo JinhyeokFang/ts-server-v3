@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { responseSuccessWithPage } from '../../utils/httpResponse/ResponseSuccess';
 import BaseController from '../BaseController';
 

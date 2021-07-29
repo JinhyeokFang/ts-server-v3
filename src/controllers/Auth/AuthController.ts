@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Response } from 'express';
 
 import BaseController from '../BaseController';
 import {
@@ -8,6 +8,7 @@ import UserService from '../../services/User/UserService';
 import JWT, { TokenData } from '../../utils/JWT';
 import { responseSuccess } from '../../utils/httpResponse/ResponseSuccess';
 import { ConflictError } from '../../utils/httpResponse/ResponseConflict';
+import errorHandling from '../../utils/httpResponse/errorHandling';
 
 export default class AuthController extends BaseController {
   public constructor() {
@@ -30,7 +31,7 @@ export default class AuthController extends BaseController {
         },
       });
     } catch (error) {
-      this.errorHandling(res, error);
+      errorHandling(res, error);
     }
   }
 
@@ -42,7 +43,7 @@ export default class AuthController extends BaseController {
       await UserService.getInstance().createUser(username, password);
       responseSuccess(res, {});
     } catch (error) {
-      this.errorHandling(res, error);
+      errorHandling(res, error);
     }
   }
 
@@ -53,7 +54,7 @@ export default class AuthController extends BaseController {
       await UserService.getInstance().removeUser(username, password);
       responseSuccess(res, {});
     } catch (error) {
-      this.errorHandling(res, error);
+      errorHandling(res, error);
     }
   }
 
@@ -70,7 +71,7 @@ export default class AuthController extends BaseController {
       const accessToken: string = await JWT.sign(false, tokenData.username);
       responseSuccess(res, { data: { accessToken } });
     } catch (error) {
-      this.errorHandling(res, error);
+      errorHandling(res, error);
     }
   }
 }
