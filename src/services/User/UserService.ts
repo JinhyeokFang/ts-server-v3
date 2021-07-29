@@ -5,8 +5,9 @@
 
 import { UserModel } from '../../models/User/UserModel';
 import Crypto from '../../utils/Crypto';
+import { ConflictError } from '../../utils/httpResponse/ResponseConflict';
+import { NotFoundError } from '../../utils/httpResponse/ResponseNotFound';
 import Logger from '../../utils/Logger';
-import { CreateUserResult, LoginUserResult, RemoveUserResult } from './UserService.enum';
 
 export default class UserService {
   private static instance: UserService;
@@ -30,15 +31,15 @@ export default class UserService {
    * 유저 생성
    * @param  {string} username
    * @param  {string} password
-   * @returns  {CreateUserResult}
+   * @returns  {void}
    */
-  public async createUser(username: string, password: string): Promise<CreateUserResult> {
+  public async createUser(username: string, password: string): Promise<void> {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,
     });
     if (userInstance) {
-      throw CreateUserResult.AlreadyExist;
+      throw new ConflictError('이미 존재하는 유저입니다.');
     }
 
     const key: string = await Crypto.createKey();
@@ -47,56 +48,52 @@ export default class UserService {
     await UserModel.create({
       username, password: encryptedPassword, key, iv,
     });
-
-    return CreateUserResult.Success;
   }
 
   /**
    * 유저 로그인
    * @param  {string} username
    * @param  {string} password
-   * @returns  {LoginUserResult}
+   * @returns  {void}
    */
-  public async loginUser(username: string, password: string): Promise<LoginUserResult> {
+  public async loginUser(username: string, password: string): Promise<void> {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,
     });
     if (!userInstance) {
-      throw LoginUserResult.NotFound;
+      throw new NotFoundError("유저를 찾을 수 없습니다.");
     }
 
     // 입력한 비밀번호 해시화 후 비교
     const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
     if (encryptedPassword !== userInstance.password) {
-      throw LoginUserResult.NotFound;
+      throw new NotFoundError("유저를 찾을 수 없습니다.");
     }
-    return LoginUserResult.Success;
   }
 
   /**
    * 유저 삭제
    * @param  {string} username
    * @param  {string} password
-   * @returns  {RemoveUserResult}
+   * @returns  {void}
    */
-  public async removeUser(username: string, password: string): Promise<RemoveUserResult> {
+  public async removeUser(username: string, password: string): Promise<void> {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,
     });
     if (!userInstance) {
-      throw RemoveUserResult.NotFound;
+      throw new NotFoundError("유저를 찾을 수 없습니다.");
     }
 
     // 입력한 비밀번호 해시화 후 비교
     const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
     if (encryptedPassword !== userInstance.password) {
-      throw RemoveUserResult.PasswordIncorrect;
+      throw new NotFoundError("유저를 찾을 수 없습니다.");
     }
 
     // 삭제
     userInstance.remove();
-    return RemoveUserResult.Success;
   }
 }

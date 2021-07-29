@@ -1,22 +1,21 @@
 import { Router, Response } from 'express';
 
-import { BaseController } from '../BaseController';
-import { JWT, TokenStatus } from '../../utils/JWT';
+import BaseController from '../BaseController';
 import {
-  LoginRequest, RegisterRequest, ReloginRequest, TokenDataRequest,
+  LoginRequest, RegisterRequest, ReloginRequest, TokenDataRequest, RemoveRequest
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
-import { CreateUserResult, LoginUserResult } from '../../services/User/UserService.enum';
-import Logger from '../../utils/Logger';
+import JWT, { TokenData } from '../../utils/JWT';
+import { responseSuccess } from '../../utils/httpResponse/ResponseSuccess';
+import { ConflictError } from '../../utils/httpResponse/ResponseConflict';
 
-export class AuthController extends BaseController {
+export default class AuthController extends BaseController {
   public constructor() {
     super();
     this.router.post('/login', this.login);
     this.router.post('/register', this.register);
     this.router.delete('/remove', this.remove);
-    this.router.post('/relogin', this.relogin);
-    this.router.post('/tokenCheck', this.tokenData);
+    this.router.post('/refresh', this.refresh);
   }
 
   private async login(req: LoginRequest, res: Response): Promise<void> {
@@ -24,22 +23,14 @@ export class AuthController extends BaseController {
 
     try {
       await UserService.getInstance().loginUser(username, password);
-      super.ResponseSuccess(res, {
+      responseSuccess(res, {
         data: {
-          accessToken: JWT.createAccessToken({ username }),
-          refreshToken: JWT.createRefreshToken({ username }),
+          accessToken: JWT.sign(true, username),
+          refreshToken: JWT.sign(false, username),
         },
       });
     } catch (error) {
-      switch (error) {
-        case LoginUserResult.NotFound:
-          super.ResponseNotFound(res, { errorMessage: 'User Not Found' });
-          break;
-        default:
-          super.ResponseInternalServerError(res, { errorMessage: 'Server Error' });
-          Logger.error(error);
-          break;
-      }
+      this.errorHandling(res, error);
     }
   }
 
@@ -49,17 +40,9 @@ export class AuthController extends BaseController {
 
     try {
       await UserService.getInstance().createUser(username, password);
-      super.ResponseSuccess(res, {});
+      responseSuccess(res, {});
     } catch (error) {
-      switch (error) {
-        case CreateUserResult.AlreadyExist:
-          super.ResponseConflict(res, { errorMessage: 'User Already Exist' });
-          break;
-        default:
-          super.ResponseInternalServerError(res, { errorMessage: 'Server Error' });
-          Logger.error(error);
-          break;
-      }
+      this.errorHandling(res, error);
     }
   }
 
@@ -68,59 +51,26 @@ export class AuthController extends BaseController {
 
     try {
       await UserService.getInstance().removeUser(username, password);
-      super.ResponseSuccess(res, {});
+      responseSuccess(res, {});
     } catch (error) {
-      switch (error) {
-        case RemoveUser.NotFound:
-          super.ResponseNotFound(res, { errorMessage: 'User Not Found' });
-          break;
-        case RemoveUser.PasswordIncorrect:
-          super.ResponseForbidden(res, { errorMessage: 'Password Incorrect' });
-          break;
-        default:
-          super.ResponseInternalServerError(res, { errorMessage: 'Server Error' });
-          Logger.error(error);
-          break;
-      }
+      this.errorHandling(res, error);
     }
   }
 
-  private async relogin(req: ReloginRequest, res: Response): Promise<void> {
+  private async refresh(req: ReloginRequest, res: Response): Promise<void> {
     const { refreshToken } = req.body;
 
-    const result = JWT.checkRefreshToken(refreshToken);
-    if (result.status === TokenStatus.OK) {
-      super.ResponseSuccess(res, {
-        data: {
-          accessToken: JWT.createAccessToken(result.userData ? result.userData : {}),
-          refreshToken: JWT.createRefreshToken(result.userData ? result.userData : {}),
-        },
-      });
-    } else if (result.status === TokenStatus.Expired) {
-      super.ResponseForbidden(res, { errorMessage: 'Token Is Expired' });
-    } else {
-      super.ResponseBadRequest(res, { errorMessage: 'Token Is Wrong' });
+    try {
+      const tokenData: TokenData = await JWT.verify(refreshToken);
+
+      if (tokenData.isAccessToken) {
+        throw new ConflictError('RefreshToken만 가능합니다.');
+      }
+
+      const accessToken: string = await JWT.sign(false, tokenData.username);
+      responseSuccess(res, { data: { accessToken } });
+    } catch (error) {
+      this.errorHandling(res, error);
     }
   }
-
-  private async tokenData(req: TokenDataRequest, res: Response): Promise<void> {
-    const { token } = req.body;
-
-    const tokenObject = JWT.decodeToken(token);
-    const checkAccessToken = JWT.checkAccessToken(token);
-    const checkRefreshToken = JWT.checkRefreshToken(token);
-    super.ResponseSuccess(res, {
-      data: {
-        tokenObject,
-        accessTokenOK: checkAccessToken.status === TokenStatus.OK,
-        refreshTokenOK: checkRefreshToken.status === TokenStatus.OK,
-      },
-    });
-  }
-
-  public get controllerRouter(): Router {
-    return this.router;
-  }
 }
-
-export default new AuthController().controllerRouter;

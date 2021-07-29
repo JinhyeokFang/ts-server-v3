@@ -1,79 +1,53 @@
-import { encode, decode } from 'jwt-simple';
+import { Request, Response, NextFunction } from 'express';
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
 
-export enum TokenStatus {
-  OK,
-  Expired,
-  Wrong
+export interface TokenData {
+  isAccessToken: boolean,
+  username: string
 }
 
-export enum TokenType {
-  AccessToken,
-  RefreshToken
-}
+export default class JWT {
+  private static privateKey = fs.readFileSync('private.key');
 
-export interface CheckFunctionReturnValue {
-  status: TokenStatus;
-  userData?: Record<string, unknown>;
-}
-
-export interface Token {
-  userData: Record<string, unknown>,
-  type: TokenType,
-  time: number
-}
-
-export class JWT {
-  public static encodeToken(data: Token): string {
-    return encode(data, 'SECRET_KEY');
+  public static async sign(isAccessToken: boolean, username: string): Promise<string> {
+    const tokenData: TokenData = {
+      isAccessToken: false,
+      username,
+    };
+    const token: string = await jwt.sign(tokenData, this.privateKey, { expiresIn: isAccessToken ? '1d' : '1m' });
+    return token;
   }
 
-  public static decodeToken(token: string): Token {
-    return decode(token, 'SECRET_KEY');
+  public static async verify(token: string): Promise<TokenData> {
+    const data: TokenData = await jwt.verify(token, this.privateKey);
+    return data;
   }
 
-  public static createAccessToken(userData: Record<string, unknown>): string {
-    return this.encodeToken({
-      userData,
-      type: TokenType.AccessToken,
-      time: new Date().getTime(),
-    });
-  }
-
-  public static createRefreshToken(userData: Record<string, unknown>): string {
-    return this.encodeToken({
-      userData,
-      type: TokenType.RefreshToken,
-      time: new Date().getTime(),
-    });
-  }
-
-  public static checkAccessToken(token: string): CheckFunctionReturnValue {
-    try {
-      const data = this.decodeToken(token);
-      if (data.time < new Date().getTime() - 1 * 60 * 60 * 1000) {
-        return { status: TokenStatus.Expired };
-      }
-      if (data.type === TokenType.AccessToken) {
-        return { status: TokenStatus.OK, userData: data.userData };
-      }
-      return { status: TokenStatus.Wrong };
-    } catch (error) {
-      return { status: TokenStatus.Wrong };
+  public static async checkAccessTokenMiddleware(req: Request,
+    res: Response, next: NextFunction): Promise<void> {
+    const token: string | string[] | undefined = req.headers.Authorization
+     || req.headers.authorization;
+    if (!token) {
+      res.status(401).send({ success: false, errorMessage: '토큰이 요청 헤더에 존재하지 않습니다.' });
+      return;
     }
-  }
 
-  public static checkRefreshToken(token: string): CheckFunctionReturnValue {
+    if (token instanceof Array) {
+      res.status(400).send({ success: false, errorMessage: '토큰은 string[]이 아니라 string이어야 합니다.' });
+      return;
+    }
+
     try {
-      const data = this.decodeToken(token);
-      if (data.time < new Date().getTime() - 1 * 24 * 60 * 60 * 1000) {
-        return { status: TokenStatus.Expired };
+      const data: TokenData = await JWT.verify(token);
+      if (!data.isAccessToken) {
+        res.status(401).send({ success: false, message: 'AccessToken만 가능합니다.'});
+        return;
       }
-      if (data.type === TokenType.RefreshToken) {
-        return { status: TokenStatus.OK, userData: data.userData };
-      }
-      return { status: TokenStatus.Wrong };
-    } catch (error) {
-      return { status: TokenStatus.Wrong };
+      res.locals.username = data.username;
+      next();
+    } catch (err) {
+      res.status(401).send({ success: false, message: '잘못되었거나 만료된 토큰입니다.'});
     }
   }
 }

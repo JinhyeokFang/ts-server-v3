@@ -1,51 +1,36 @@
-import { Response, Router } from 'express';
+import { Response, Router } from "express";
+import { BadRequestError, responseBadRequest } from "../utils/httpResponse/ResponseBadRequest";
+import { ConflictError, responseConflict } from "../utils/httpResponse/ResponseConflict";
+import { ForbiddenError, responseForbidden } from "../utils/httpResponse/ResponseForbidden";
+import { InternalServerError, responseInternalServerError } from "../utils/httpResponse/ResponseInternalServerError";
+import { NotFoundError, responseNotFound } from "../utils/httpResponse/ResponseNotFound";
+import { responseUnauthorized, UnauthorizedError } from "../utils/httpResponse/ResponseUnauthorized";
 
-export interface ResponseSuccessBody {
-  data?: Record<string, unknown>,
-  message?: string
-}
-
-export interface ResponseFailedBody {
-  errorMessage?: string,
-  errorCode?: number
-}
-
-export abstract class BaseController {
+export default abstract class BaseController {
   public router: Router = Router();
 
-  protected ResponseSuccess(res: Response, body: ResponseSuccessBody): void {
-    res.status(200).json(body);
-  }
-
-  protected ResponseSuccessWithPage(res: Response, pageName: string): void {
-    res.render(pageName);
-  }
-
-  protected ResponseBadRequest(res: Response, body: ResponseFailedBody): void {
-    res.status(400).json(body);
-  }
-
-  protected ResponseUnauthorized(res: Response, body: ResponseFailedBody): void {
-    res.status(401).json(body);
-  }
-
-  protected ResponseForbidden(res: Response, body: ResponseFailedBody): void {
-    res.status(403).json(body);
-  }
-
-  protected ResponseNotFound(res: Response, body: ResponseFailedBody): void {
-    res.status(404).json(body);
-  }
-
-  protected ResponseConflict(res: Response, body: ResponseFailedBody): void {
-    res.status(409).json(body);
-  }
-
-  protected ResponseImATeaPot(res: Response, body: ResponseFailedBody): void {
-    res.status(418).json(body);
-  }
-
-  protected ResponseInternalServerError(res: Response, body: ResponseFailedBody): void {
-    res.status(500).json(body);
+  protected errorHandling(res: Response, error: Error): void {
+    switch (error.constructor) {
+      case BadRequestError:
+        responseBadRequest(res, { errorMessage: error.message });
+        break;
+      case UnauthorizedError:
+        responseUnauthorized(res, { errorMessage: error.message });
+        break;
+      case ForbiddenError:
+        responseForbidden(res, { errorMessage: error.message });
+        break;
+      case NotFoundError:
+        responseNotFound(res, { errorMessage: error.message });
+        break;
+      case ConflictError:
+        responseConflict(res, { errorMessage: error.message });
+        break;
+      case InternalServerError:
+        responseInternalServerError(res, { errorMessage: error.message });
+        break;
+      default:
+        break;
+    }
   }
 }
