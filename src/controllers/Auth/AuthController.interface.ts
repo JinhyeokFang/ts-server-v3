@@ -26,9 +26,3 @@ export interface ReloginRequest extends Request {
         refreshToken: string
     }
 }
-
-export interface TokenDataRequest extends Request {
-    body: {
-        token: string
-    }
-}

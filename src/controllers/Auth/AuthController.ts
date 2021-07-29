@@ -2,13 +2,11 @@ import { Response } from 'express';
 
 import BaseController from '../BaseController';
 import {
-  LoginRequest, RegisterRequest, ReloginRequest, TokenDataRequest, RemoveRequest
+  LoginRequest, RegisterRequest, ReloginRequest, RemoveRequest
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
 import JWT, { TokenData } from '../../utils/JWT';
-import { responseSuccess } from '../../utils/httpResponse/ResponseSuccess';
-import { ConflictError } from '../../utils/httpResponse/ResponseConflict';
-import errorHandling from '../../utils/httpResponse/errorHandling';
+import { errorHandling, responseSuccess, ConflictError } from 'ts-response';
 
 export default class AuthController extends BaseController {
   public constructor() {
@@ -24,6 +22,7 @@ export default class AuthController extends BaseController {
 
     try {
       await UserService.getInstance().loginUser(username, password);
+      
       responseSuccess(res, {
         data: {
           accessToken: JWT.sign(true, username),

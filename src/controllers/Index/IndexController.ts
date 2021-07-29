@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { responseSuccessWithPage } from '../../utils/httpResponse/ResponseSuccess';
+import { responseSuccessWithPage } from 'ts-response';
 import BaseController from '../BaseController';
 
 export default class IndexController extends BaseController {
