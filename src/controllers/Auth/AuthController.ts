@@ -15,6 +15,8 @@ export default class AuthController extends BaseController {
     this.router.post('/register', this.register);
     this.router.delete('/remove', this.remove);
     this.router.post('/refresh', this.refresh);
+    this.router.use(JWT.checkAccessTokenMiddleware);
+    this.router.get('/profile', this.profile);
   }
 
   private async login(req: LoginRequest, res: Response): Promise<void> {
@@ -34,7 +36,6 @@ export default class AuthController extends BaseController {
     }
   }
 
-  // TODO: 이미지 프로필 자동 추가 + editUserInformation
   private async register(req: RegisterRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
@@ -69,6 +70,16 @@ export default class AuthController extends BaseController {
 
       const accessToken: string = await JWT.sign(false, tokenData.username);
       responseSuccess(res, { data: { accessToken } });
+    } catch (error) {
+      errorHandling(res, error);
+    }
+  }
+
+  private async profile(req: ReloginRequest, res: Response): Promise<void> {
+    const { username } = res.locals;
+
+    try {
+      responseSuccess(res, { data: { username } });
     } catch (error) {
       errorHandling(res, error);
     }

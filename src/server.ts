@@ -31,7 +31,8 @@ app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('./static'));
+
+app.use('/static', express.static('./files'));
 
 app.use('/', new IndexController().router);
 app.use('/auth', new AuthController().router);

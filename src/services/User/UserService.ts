@@ -45,7 +45,7 @@ export default class UserService {
     const encryptedPassword: string = await Crypto.hash(password, key);
     const iv: Buffer = await Crypto.createIV();
     await UserModel.create({
-      username, password: encryptedPassword, key, iv,
+      username, password: encryptedPassword, key, iv, profileImageURL: '/static/default_profile.jpg',
     });
   }
 
