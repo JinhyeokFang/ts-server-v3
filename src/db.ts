@@ -3,8 +3,9 @@ import Logger from './utils/Logger';
 
 export default class DB {
   /**
-   * MongoDB 연결
-   * 다른 DB 추가 대비해 Class로 작성
+   * MongoDB와 서버를 연결
+   * 연결에 실패하거나 종료될 시 재연결
+   * 세 번 연결 오류가 발생하면 서버를 종료
    * @param  {string} dbname
    * @param  {number} dbport
    * @param  {string} host

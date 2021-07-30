@@ -1,6 +1,4 @@
-FROM node:14.17.0
-
-MAINTAINER jinhyeokfang <jinhyeokfang@gmail.com>
+FROM node:14.17.3
 
 RUN mkdir -p /app
 RUN mkdir -p /data/db

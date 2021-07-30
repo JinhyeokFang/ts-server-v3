@@ -41,4 +41,5 @@ app.set('view engine', 'ejs');
 
 app.listen(port, (): void => {
   Logger.info(`Listening at http://localhost:${port}/`);
+  console.log(`Listening at http://localhost:${port}/`);
 });
