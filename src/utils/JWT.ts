@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 
-export interface TokenData {
+export interface ITokenData extends Record<string, unknown> {
   isAccessToken: boolean,
   username: string
 }
@@ -12,7 +12,7 @@ export default class JWT {
   // TODO: .env에서 가져오는 것으로 변경
 
   public static async sign(isAccessToken: boolean, username: string): Promise<string> {
-    const tokenData: TokenData = {
+    const tokenData: ITokenData = {
       isAccessToken: false,
       username,
     };
@@ -20,8 +20,8 @@ export default class JWT {
     return token;
   }
 
-  public static async verify(token: string): Promise<TokenData> {
-    const data: TokenData = await jwt.verify(token, this.privateKey);
+  public static async verify(token: string): Promise<ITokenData> {
+    const data: ITokenData = await jwt.verify(token, this.privateKey);
     return data;
   }
 
@@ -40,7 +40,7 @@ export default class JWT {
     }
 
     try {
-      const data: TokenData = await JWT.verify(token);
+      const data: ITokenData = await JWT.verify(token);
       if (!data.isAccessToken) {
         res.status(401).send({ success: false, message: 'AccessToken만 가능합니다.' });
         return;

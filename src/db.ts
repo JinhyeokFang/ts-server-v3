@@ -10,18 +10,32 @@ export default class DB {
    * @param  {number} dbport
    * @param  {string} host
    */
-  private static errorCount = 0;
+  private static errorCount = 1;
 
   private static host = 'localhost';
 
   private static dbport = 27017;
 
-  public static async initialize(dbname: string, dbport?: number, host?: string): Promise<void> {
+  public static initialize(dbname: string, dbport?: number, host?: string): void {
     if (dbport) this.dbport = dbport;
     if (host) this.host = host;
 
+    mongoose.connection.on('connected', () => {
+      Logger.info('DB가 연결되었습니다.');
+      this.errorCount = 1;
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      Logger.error('DB와의 연결이 중단되었습니다. 연결을 재시도합니다.');
+      this.connect(dbname, this.dbport, this.host);
+    });
+
+    this.connect(dbname, this.dbport, this.host);
+  }
+
+  private static async connect(dbname: string, dbport?: number, host?: string): Promise<void> {
     try {
-      if (this.errorCount > 1) Logger.info('DB 연결 재시도');
+      if (this.errorCount > 1) Logger.info(`DB 연결 재시도, ${this.errorCount}번째`);
       else Logger.info('DB 연결 시도');
 
       await mongoose.connect(`mongodb://${host}:${dbport}/${dbname}`, {
@@ -30,23 +44,13 @@ export default class DB {
       });
     } catch (error) {
       Logger.error(error);
+      this.errorCount += 1;
       if (this.errorCount > 3) {
-        Logger.error('DB 연결에 실패했습니다. 서버를 종료합니다.');
+        await Logger.error('DB 연결에 실패했습니다. 서버를 종료합니다.');
         process.exit();
       }
       Logger.error('DB에서 에러가 발생했습니다. 연결을 재시도합니다.');
-      this.errorCount += 1;
-      setTimeout(() => this.initialize(dbname, this.dbport, this.host), 10000);
+      setTimeout(() => this.connect(dbname, this.dbport, this.host), 10000);
     }
-
-    mongoose.connection.on('connected', () => {
-      Logger.info('DB가 연결되었습니다.');
-      this.errorCount = 0;
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      Logger.error('DB와의 연결이 중단되었습니다. 연결을 재시도합니다.');
-      this.initialize(dbname, this.dbport, this.host);
-    });
   }
 }

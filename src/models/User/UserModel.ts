@@ -2,7 +2,12 @@ import {
   Schema, model, Model, Document,
 } from 'mongoose';
 
-interface IUserModel extends Document {
+interface IUser extends Record<string, unknown> {
+  username: string;
+  profileImageURL: string;
+}
+
+interface IUserModel extends Document, IUser {
   username: string;
   password: string;
   profileImageURL: string;
@@ -19,4 +24,4 @@ const userSchema = new Schema({
 
 const UserModel: Model<IUserModel> = model('user', userSchema);
 
-export { UserModel, IUserModel };
+export { IUser, UserModel, IUserModel };

@@ -1,27 +1,27 @@
 import { Request } from 'express';
 
-export interface LoginRequest extends Request {
+export interface ILoginRequest extends Request {
     body: {
         username: string,
         password: string
     }
 }
 
-export interface RegisterRequest extends Request {
+export interface IRegisterRequest extends Request {
     body: {
         username: string,
         password: string
     }
 }
 
-export interface RemoveRequest extends Request {
+export interface IRemoveRequest extends Request {
     body: {
         username: string,
         password: string
     }
 }
 
-export interface ReloginRequest extends Request {
+export interface IReloginRequest extends Request {
     body: {
         refreshToken: string
     }

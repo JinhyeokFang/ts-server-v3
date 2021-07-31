@@ -1,12 +1,12 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import { errorHandling, responseSuccess, ConflictError } from 'ts-response';
 import BaseController from '../BaseController';
 import {
-  LoginRequest, RegisterRequest, ReloginRequest, RemoveRequest,
+  ILoginRequest, IRegisterRequest, IReloginRequest, IRemoveRequest,
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
-import JWT, { TokenData } from '../../utils/JWT';
+import JWT, { ITokenData } from '../../utils/JWT';
 
 export default class AuthController extends BaseController {
   public constructor() {
@@ -16,10 +16,11 @@ export default class AuthController extends BaseController {
     this.router.delete('/remove', this.remove);
     this.router.post('/refresh', this.refresh);
     this.router.use(JWT.checkAccessTokenMiddleware);
-    this.router.get('/profile', this.profile);
+    this.router.get('/profile', this.getProfile);
+    this.router.patch('/profile', this.patchProfile);
   }
 
-  private async login(req: LoginRequest, res: Response): Promise<void> {
+  private async login(req: ILoginRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
     try {
@@ -36,7 +37,7 @@ export default class AuthController extends BaseController {
     }
   }
 
-  private async register(req: RegisterRequest, res: Response): Promise<void> {
+  private async register(req: IRegisterRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
     try {
@@ -47,7 +48,7 @@ export default class AuthController extends BaseController {
     }
   }
 
-  private async remove(req: RemoveRequest, res: Response): Promise<void> {
+  private async remove(req: IRemoveRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 
     try {
@@ -58,11 +59,11 @@ export default class AuthController extends BaseController {
     }
   }
 
-  private async refresh(req: ReloginRequest, res: Response): Promise<void> {
+  private async refresh(req: IReloginRequest, res: Response): Promise<void> {
     const { refreshToken } = req.body;
 
     try {
-      const tokenData: TokenData = await JWT.verify(refreshToken);
+      const tokenData: ITokenData = await JWT.verify(refreshToken);
 
       if (tokenData.isAccessToken) {
         throw new ConflictError('RefreshToken만 가능합니다.');
@@ -75,11 +76,23 @@ export default class AuthController extends BaseController {
     }
   }
 
-  private async profile(req: ReloginRequest, res: Response): Promise<void> {
+  private async getProfile(req: Request, res: Response): Promise<void> {
     const { username } = res.locals;
 
     try {
-      responseSuccess(res, { data: { username } });
+      const data = await UserService.getInstance().getProfile(username);
+      responseSuccess(res, { data });
+    } catch (error) {
+      errorHandling(res, error);
+    }
+  }
+
+  // TODO: 이미지 변경
+  private async patchProfile(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals;
+
+    try {
+      responseSuccess(res, {  });
     } catch (error) {
       errorHandling(res, error);
     }

@@ -4,7 +4,7 @@
 // editUser
 
 import { NotFoundError, ConflictError } from 'ts-response';
-import { UserModel } from '../../models/User/UserModel';
+import { IUser, UserModel } from '../../models/User/UserModel';
 import Crypto from '../../utils/Crypto';
 import Logger from '../../utils/Logger';
 
@@ -94,5 +94,23 @@ export default class UserService {
 
     // 삭제
     userInstance.remove();
+  }
+
+  /**
+   * 유저 프로필 불러오기
+   * @param  {string} username
+   * @param  {string} password
+   * @returns  {void}
+   */
+  public async getProfile(username: string): Promise<IUser> {
+    // 이미 존재하는 유저인지 확인
+    const userInstance = await UserModel.findOne({
+      username,
+    });
+    if (!userInstance) {
+      throw new NotFoundError('유저를 찾을 수 없습니다.');
+    }
+
+    return userInstance;
   }
 }
