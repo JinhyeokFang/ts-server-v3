@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Logger from './utils/Logger';
+import Logger from './utils/logger';
 
 export default class DB {
   /**

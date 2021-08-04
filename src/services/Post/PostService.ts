@@ -1,5 +1,4 @@
-import { PostModel } from '../../models/Post/PostModel';
-import Logger from '../../utils/Logger';
+import logger from '../../utils/logger';
 
 export default class PostService {
   private static instance: PostService;
@@ -8,7 +7,7 @@ export default class PostService {
    * Service 인스턴스 생성시 로그 작성
    */
   private constructor() {
-    Logger.info('PostService Created');
+    logger.info('PostService Created');
   }
 
   /**

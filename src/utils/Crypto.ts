@@ -6,7 +6,7 @@ export default class Crypto {
   public static key: string;
 
   public static setKey(newKey: string): void {
-    Crypto.key = newKey;
+    this.key = newKey;
   }
 
   public static async encrypt(data: string, iv: Buffer): Promise<string> {

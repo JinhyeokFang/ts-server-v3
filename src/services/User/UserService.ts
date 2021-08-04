@@ -6,7 +6,7 @@
 import { NotFoundError, ConflictError } from 'ts-response';
 import { IUser, UserModel } from '../../models/User/UserModel';
 import Crypto from '../../utils/Crypto';
-import Logger from '../../utils/Logger';
+import logger from '../../utils/logger';
 
 export default class UserService {
   private static instance: UserService;
@@ -15,7 +15,7 @@ export default class UserService {
    * Service 인스턴스 생성시 로그 작성
    */
   private constructor() {
-    Logger.info('UserService Created');
+    logger.info('UserService Created');
   }
 
   /**

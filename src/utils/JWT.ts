@@ -8,20 +8,23 @@ export interface ITokenData extends Record<string, unknown> {
 }
 
 export default class JWT {
-  private static privateKey = fs.readFileSync('private.key');
-  // TODO: .env에서 가져오는 것으로 변경
+  public static key: string;
+
+  public static setKey(newKey: string): void {
+    this.key = newKey;
+  }
 
   public static async sign(isAccessToken: boolean, username: string): Promise<string> {
     const tokenData: ITokenData = {
       isAccessToken: false,
       username,
     };
-    const token: string = await jwt.sign(tokenData, this.privateKey, { expiresIn: isAccessToken ? '1d' : '1m' });
+    const token: string = await jwt.sign(tokenData, this.key, { expiresIn: isAccessToken ? '1d' : '1m' });
     return token;
   }
 
   public static async verify(token: string): Promise<ITokenData> {
-    const data: ITokenData = await jwt.verify(token, this.privateKey);
+    const data: ITokenData = await jwt.verify(token, this.key);
     return data;
   }
 
