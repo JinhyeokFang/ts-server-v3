@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { responseSuccessWithPage } from 'ts-response';
+import { responseOKWithPage } from 'ts-response';
 import BaseController from '../BaseController';
 
 export default class IndexController extends BaseController {
@@ -9,6 +9,6 @@ export default class IndexController extends BaseController {
   }
 
   private index(req: Request, res: Response): void {
-    responseSuccessWithPage(res, 'index');
+    responseOKWithPage(res, 'index');
   }
 }

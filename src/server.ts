@@ -27,7 +27,7 @@ try {
   port = parseInt(processEnv('PORT'), 10);
   Crypto.setKey(processEnv('KEY'));
   JWT.setKey(processEnv('KEY'));
-  DB.initialize(processEnv('DB_NAME'), parseInt(processEnv('DB_PORT'), 10), processEnv('DB_HOSt'));
+  DB.initialize(processEnv('DB_NAME'), parseInt(processEnv('DB_PORT'), 10), processEnv('DB_HOST'));
 } catch (error) {
   (async () => {
     await logger.error(error);
@@ -46,7 +46,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/static', express.static('./files'));
+app.use('/static', express.static('./static'));
 
 app.use('/', new IndexController().router);
 app.use('/auth', new AuthController().router);

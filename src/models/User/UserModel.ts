@@ -20,6 +20,7 @@ const userSchema = new Schema({
   profileImageURL: { type: String, required: true },
   password: { type: String, required: true },
   iv: { type: String, required: true },
+  key: { type: String, required: true },
 });
 
 const UserModel: Model<IUserModel> = model('user', userSchema);

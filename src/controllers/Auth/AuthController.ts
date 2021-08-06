@@ -1,12 +1,15 @@
 import { Request, Response } from 'express';
-
-import { errorHandling, responseSuccess, ConflictError } from 'ts-response';
+import {
+  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError,
+} from 'ts-response';
+import path from 'path';
 import BaseController from '../BaseController';
 import {
-  ILoginRequest, IRegisterRequest, IReloginRequest, IRemoveRequest,
+  ILoginRequest, IRegisterRequest, IRefreshRequest, IRemoveRequest, IPatchProfileRequest,
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
 import JWT, { ITokenData } from '../../utils/JWT';
+import { imageUpload } from '../../utils/fileSave';
 
 export default class AuthController extends BaseController {
   public constructor() {
@@ -16,8 +19,8 @@ export default class AuthController extends BaseController {
     this.router.delete('/remove', this.remove);
     this.router.post('/refresh', this.refresh);
     this.router.use(JWT.checkAccessTokenMiddleware);
-    this.router.get('/profile', this.getProfile);
-    this.router.patch('/profile', this.patchProfile);
+    this.router.get('/profile/image', this.getProfileImage);
+    this.router.put('/profile', imageUpload.single('profile'), this.patchProfile);
   }
 
   private async login(req: ILoginRequest, res: Response): Promise<void> {
@@ -26,10 +29,10 @@ export default class AuthController extends BaseController {
     try {
       await UserService.getInstance().loginUser(username, password);
 
-      responseSuccess(res, {
+      responseOK(res, {
         data: {
-          accessToken: JWT.sign(true, username),
-          refreshToken: JWT.sign(false, username),
+          accessToken: await JWT.sign(true, username),
+          refreshToken: await JWT.sign(false, username),
         },
       });
     } catch (error) {
@@ -42,7 +45,7 @@ export default class AuthController extends BaseController {
 
     try {
       await UserService.getInstance().createUser(username, password);
-      responseSuccess(res, {});
+      responseOK(res, {});
     } catch (error) {
       errorHandling(res, error);
     }
@@ -53,13 +56,13 @@ export default class AuthController extends BaseController {
 
     try {
       await UserService.getInstance().removeUser(username, password);
-      responseSuccess(res, {});
+      responseOK(res, {});
     } catch (error) {
       errorHandling(res, error);
     }
   }
 
-  private async refresh(req: IReloginRequest, res: Response): Promise<void> {
+  private async refresh(req: IRefreshRequest, res: Response): Promise<void> {
     const { refreshToken } = req.body;
 
     try {
@@ -70,29 +73,34 @@ export default class AuthController extends BaseController {
       }
 
       const accessToken: string = await JWT.sign(false, tokenData.username);
-      responseSuccess(res, { data: { accessToken } });
+      responseOK(res, { data: { accessToken } });
     } catch (error) {
       errorHandling(res, error);
     }
   }
 
-  private async getProfile(req: Request, res: Response): Promise<void> {
+  private async getProfileImage(req: Request, res: Response): Promise<void> {
     const { username } = res.locals;
 
     try {
       const data = await UserService.getInstance().getProfile(username);
-      responseSuccess(res, { data });
+      responseOKWithFile(res, path.join(__dirname, `../../../files/${data.profileImageURL}`));
     } catch (error) {
       errorHandling(res, error);
     }
   }
 
-  // TODO: 이미지 변경
-  private async patchProfile(req: Request, res: Response): Promise<void> {
+  private async patchProfile(req: IPatchProfileRequest, res: Response): Promise<void> {
     const { username } = res.locals;
 
     try {
-      responseSuccess(res, {  });
+      if (req.file === undefined) {
+        throw new BadRequestError('프로필 사진을 추가해야합니다.');
+      }
+
+      const { filename } = req.file;
+      await UserService.getInstance().setProfileImage(username, filename);
+      responseOK(res, { });
     } catch (error) {
       errorHandling(res, error);
     }
