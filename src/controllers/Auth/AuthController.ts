@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import {
-  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError,
+  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError, responseBadRequest, responseInternalServerError,
 } from 'ts-response';
 import path from 'path';
 import BaseController from '../BaseController';
@@ -9,7 +9,7 @@ import {
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
 import JWT, { ITokenData } from '../../utils/JWT';
-import { imageUpload } from '../../utils/fileSave';
+import { imageUpload, imageUploader } from '../../utils/fileSave';
 
 export default class AuthController extends BaseController {
   public constructor() {
@@ -20,7 +20,7 @@ export default class AuthController extends BaseController {
     this.router.post('/refresh', this.refresh);
     this.router.use(JWT.checkAccessTokenMiddleware);
     this.router.get('/profile/image', this.getProfileImage);
-    this.router.put('/profile', imageUpload.single('profile'), this.patchProfile);
+    this.router.put('/profile', imageUploader('profile'), this.patchProfile);
   }
 
   private async login(req: ILoginRequest, res: Response): Promise<void> {

@@ -1,8 +1,8 @@
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import crypto from 'crypto';
-import { BadRequestError } from 'ts-response';
+import { BadRequestError, responseBadRequest, responseInternalServerError } from 'ts-response';
 
 const imageUpload = multer({
   storage: multer.diskStorage({
@@ -22,6 +22,20 @@ const imageUpload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
+export function imageUploader(imageField: string) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    imageUpload.single(imageField)(req, res, (error) => {
+      if (error instanceof BadRequestError) {
+        responseBadRequest(res, { errorMessage: error.message });
+      } else if (error) {
+        responseInternalServerError(res, { errorMessage: error.message });
+      } else {
+        next();
+      }
+    });
+  };
+}
+
 const fileUpload = multer({
   storage: multer.diskStorage({
     destination: (req: Request, file,
@@ -33,4 +47,14 @@ const fileUpload = multer({
   limits: { fileSize: 100 * 1024 * 1024 },
 });
 
-export { imageUpload, fileUpload };
+export function fileUploader(fileField: string) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    fileUpload.single(fileField)(req, res, (error) => {
+      if (error) {
+        responseInternalServerError(res, { errorMessage: error.message });
+      } else {
+        next();
+      }
+    });
+  };
+}
