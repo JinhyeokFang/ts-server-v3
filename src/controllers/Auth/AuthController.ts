@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import {
-  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError, responseBadRequest, responseInternalServerError,
+  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError,
 } from 'ts-response';
 import path from 'path';
 import BaseController from '../BaseController';
@@ -9,7 +9,7 @@ import {
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
 import JWT, { ITokenData } from '../../utils/JWT';
-import { imageUpload, imageUploader } from '../../utils/fileSave';
+import { imageUploader } from '../../utils/fileSave';
 
 export default class AuthController extends BaseController {
   public constructor() {

@@ -4,7 +4,7 @@
 // editUser
 
 import { NotFoundError, ConflictError } from 'ts-response';
-import { IUser, UserModel } from '../../models/User/UserModel';
+import { IUser, UserModel } from '../../db/models/User/UserModel';
 import Crypto from '../../utils/Crypto';
 import logger from '../../utils/logger';
 
