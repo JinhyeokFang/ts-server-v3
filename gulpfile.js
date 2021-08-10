@@ -7,7 +7,6 @@ const tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('build', () => {
   return tsProject.src()
-    .pipe(tsProject())
     .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
@@ -17,7 +16,6 @@ gulp.task('devBuild', () => {
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
-    .pipe(tsProject())
     .pipe(gulp.dest('dist'));
 });
 

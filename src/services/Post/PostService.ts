@@ -1,4 +1,4 @@
-import logger from '../../utils/logger';
+import logger from '../../modules/logger';
 
 export default class PostService {
   private static instance: PostService;
@@ -13,7 +13,7 @@ export default class PostService {
   /**
    * Service는 Singleton 패턴으로 작성
    */
-  public static getInstance() {
+  public static getInstance(): PostService {
     if (PostService.instance == null) PostService.instance = new PostService();
     return PostService.instance;
   }

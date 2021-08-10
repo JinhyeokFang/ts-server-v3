@@ -8,8 +8,8 @@ import {
   ILoginRequest, IRegisterRequest, IRefreshRequest, IRemoveRequest, IPatchProfileRequest,
 } from './AuthController.interface';
 import UserService from '../../services/User/UserService';
-import JWT, { ITokenData } from '../../utils/JWT';
-import { imageUploader } from '../../utils/fileSave';
+import JWT, { ITokenData } from '../../modules/JWT';
+import { imageUploader } from '../../modules/fileSave';
 
 export default class AuthController extends BaseController {
   public constructor() {

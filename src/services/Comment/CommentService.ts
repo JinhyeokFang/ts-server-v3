@@ -1,4 +1,4 @@
-import logger from '../../utils/logger';
+import logger from '../../modules/logger';
 
 export default class CommentService {
   private static instance: CommentService;
@@ -13,7 +13,7 @@ export default class CommentService {
   /**
    * Service는 Singleton 패턴으로 작성
    */
-  public static getInstance() {
+  public static getInstance(): CommentService {
     if (CommentService.instance == null) CommentService.instance = new CommentService();
     return CommentService.instance;
   }

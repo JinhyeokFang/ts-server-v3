@@ -5,8 +5,8 @@
 
 import { NotFoundError, ConflictError } from 'ts-response';
 import { IUser, UserModel } from '../../db/models/User/UserModel';
-import Crypto from '../../utils/Crypto';
-import logger from '../../utils/logger';
+import Crypto from '../../modules/Crypto';
+import logger from '../../modules/logger';
 
 export default class UserService {
   private static instance: UserService;

@@ -9,11 +9,11 @@ import DB from './db';
 
 import IndexController from './controllers/Index/IndexController';
 import AuthController from './controllers/Auth/AuthController';
-import Crypto from './utils/Crypto';
-import logger from './utils/logger';
-import JWT from './utils/JWT';
+import Crypto from './modules/Crypto';
+import logger from './modules/logger';
+import JWT from './modules/JWT';
 
-import processEnv from './utils/undefinedChecker';
+import processEnv from './modules/undefinedChecker';
 
 const app: express.Application = express();
 
