@@ -15,9 +15,9 @@ import JWT from './modules/JWT';
 
 import processEnv from './modules/undefinedChecker';
 
-const app: express.Application = express();
-
 dotenv.config();
+
+const app = express();
 
 let port = 0;
 
@@ -55,6 +55,6 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 app.set('trust proxy', true);
 
-app.listen(port, (): void => {
+app.listen(port, () => {
   logger.info(`Listening at http://localhost:${port}/`);
 });

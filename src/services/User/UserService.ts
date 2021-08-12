@@ -3,7 +3,8 @@
 // removeUser
 // editUser
 
-import { NotFoundError, ConflictError } from 'ts-response';
+import { NotFoundError, ConflictError, BadRequestError } from 'ts-response';
+import validator from 'validator';
 import { IUser, UserModel } from '../../db/models/User/UserModel';
 import Crypto from '../../modules/Crypto';
 import logger from '../../modules/logger';
@@ -39,6 +40,17 @@ export default class UserService {
     });
     if (userInstance) {
       throw new ConflictError('이미 존재하는 유저입니다.');
+    }
+    if (!validator.isEmail(username)) {
+      throw new BadRequestError('username은 이메일만 가능합니다.');
+    }
+    if (!validator.isStrongPassword(password, {
+      minLength: 8,
+      minUppercase: 0,
+      minNumbers: 1,
+      minSymbols: 0,
+    })) {
+      throw new BadRequestError('잘못된 비밀번호입니다.');
     }
 
     const key: string = await Crypto.createKey();

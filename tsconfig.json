@@ -5,6 +5,7 @@
     "target": "es6",
     "strict": true,
     "esModuleInterop": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "rootDir": "./src"
   }
 }
