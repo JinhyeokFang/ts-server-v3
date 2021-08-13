@@ -48,7 +48,7 @@
     "dev": "./node_modules/.bin/gulp devBuild",
     "watch": "./node_modules/.bin/gulp watch",
     "lint": "./node_modules/.bin/gulp lint",
-    "start": "node ./dist/server.js"
+    "start": "node ./dist/src/server.js"
   },
   "repository": {
     "type": "git",
