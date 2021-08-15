@@ -1,4 +1,5 @@
 module.exports = {
+  "ignorePatterns": ["node_modules/*", "*.js"],
   "extends": [
     "airbnb-base",
     "plugin:@typescript-eslint/recommended"

@@ -35,20 +35,11 @@
     "eslint-plugin-mocha-no-only": "^1.1.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "gulp": "^4.0.2",
-    "gulp-babel": "^8.0.0",
-    "gulp-eslint": "^6.0.0",
-    "gulp-typescript": "^2.12.2",
-    "gulp-uglify": "^3.0.2",
-    "gulp-watch": "^4.0.1",
     "typescript": "^4.3.5"
   },
   "scripts": {
-    "build": "./node_modules/.bin/gulp",
-    "dev": "./node_modules/.bin/gulp devBuild",
-    "watch": "./node_modules/.bin/gulp watch",
-    "lint": "./node_modules/.bin/gulp lint",
-    "start": "node ./dist/src/server.js"
+    "build": "tsc",
+    "lint": "./node_modules/eslint/bin/eslint.js ."
   },
   "repository": {
     "type": "git",
