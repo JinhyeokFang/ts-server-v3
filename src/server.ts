@@ -15,46 +15,53 @@ import JWT from './modules/JWT';
 
 import processEnv from './modules/undefinedChecker';
 
-dotenv.config();
+class Server {
+  private app = express();
 
-const app = express();
+  private port = 0;
 
-let port = 0;
+  constructor() {
+    dotenv.config();
+    // .env로부터 설정 불러오기
+    // 설정 불러오기에 실패하면 서버 종료
+    try {
+      this.port = parseInt(processEnv('PORT'), 10);
+      Crypto.setKey(processEnv('KEY'));
+      JWT.setKey(processEnv('KEY'));
+      DB.initialize(processEnv('DB_NAME'), parseInt(processEnv('DB_PORT'), 10), processEnv('DB_HOST'));
+    } catch (error) {
+      (async () => {
+        await logger.error(error);
+        await logger.error('.env에서 설정 불러오기에 실패했습니다. 서버를 종료합니다.');
+        process.exit();
+      })();
+    }
 
-// .env로부터 설정 불러오기
-// 설정 불러오기에 실패하면 서버 종료
-try {
-  port = parseInt(processEnv('PORT'), 10);
-  Crypto.setKey(processEnv('KEY'));
-  JWT.setKey(processEnv('KEY'));
-  DB.initialize(processEnv('DB_NAME'), parseInt(processEnv('DB_PORT'), 10), processEnv('DB_HOST'));
-} catch (error) {
-  (async () => {
-    await logger.error(error);
-    await logger.error('.env에서 설정 불러오기에 실패했습니다. 서버를 종료합니다.');
-    process.exit();
-  })();
+    this.app.use(morgan('combined', { write: logger.info }));
+
+    this.app.use(compression());
+    this.app.use(helmet());
+    this.app.disable('x-powered-by');
+    this.app.use(cors());
+
+    this.app.use(express.json({ limit: '5mb' }));
+    this.app.use(express.urlencoded({ limit: '5mb', extended: false }));
+
+    this.app.use('/static', express.static('./static'));
+
+    this.app.use('/', new IndexController().router);
+    this.app.use('/auth', new AuthController().router);
+
+    this.app.set('views', './views');
+    this.app.set('view engine', 'ejs');
+    this.app.set('trust proxy', true);
+  }
+
+  public start() {
+    this.app.listen(this.port, () => {
+      logger.info(`Listening at http://localhost:${this.port}/`);
+    });
+  }
 }
 
-app.use(morgan('combined', { write: logger.info }));
-
-app.use(compression());
-app.use(helmet());
-app.disable('x-powered-by');
-app.use(cors());
-
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ limit: '5mb', extended: false }));
-
-app.use('/static', express.static('./static'));
-
-app.use('/', new IndexController().router);
-app.use('/auth', new AuthController().router);
-
-app.set('views', './views');
-app.set('view engine', 'ejs');
-app.set('trust proxy', true);
-
-app.listen(port, () => {
-  logger.info(`Listening at http://localhost:${port}/`);
-});
+new Server().start();
