@@ -12,6 +12,7 @@ export default winston.createLogger({
       maxFiles: '14d',
       zippedArchive: true,
     }),
+    new (winston.transports.Console)(),
     new WinstonDaily({
       level: 'error',
       datePattern: 'YYYY-MM-DD',

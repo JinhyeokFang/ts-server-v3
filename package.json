@@ -39,7 +39,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "lint": "./node_modules/eslint/bin/eslint.js ."
+    "lint": "./node_modules/eslint/bin/eslint.js .",
+    "start": "node ./build/server.js"
   },
   "repository": {
     "type": "git",

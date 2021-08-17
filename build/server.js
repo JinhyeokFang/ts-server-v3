@@ -45,6 +45,9 @@ class Server {
                 process.exit();
             }))();
         }
+        this.routerSet();
+    }
+    routerSet() {
         this.app.use(morgan_1.default('combined', { write: logger_1.default.info }));
         this.app.use(compression_1.default());
         this.app.use(helmet_1.default());

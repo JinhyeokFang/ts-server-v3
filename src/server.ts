@@ -36,7 +36,10 @@ class Server {
         process.exit();
       })();
     }
+    this.routerSet();
+  }
 
+  private routerSet() {
     this.app.use(morgan('combined', { write: logger.info }));
 
     this.app.use(compression());

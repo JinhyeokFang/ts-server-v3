@@ -16,6 +16,7 @@ exports.default = winston_1.default.createLogger({
             maxFiles: '14d',
             zippedArchive: true,
         }),
+        new (winston_1.default.transports.Console)(),
         new winston_daily_rotate_file_1.default({
             level: 'error',
             datePattern: 'YYYY-MM-DD',
