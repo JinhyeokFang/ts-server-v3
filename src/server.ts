@@ -36,10 +36,20 @@ class Server {
         process.exit();
       })();
     }
-    this.routerSet();
+    this.appConfigSet();
+    this.appRouterSet();
   }
 
-  private routerSet() {
+  private appConfigSet() {
+    this.app.set('views', './views');
+    this.app.set('view engine', 'ejs');
+    this.app.set('trust proxy', true);
+  }
+
+  private appRouterSet() {
+    this.app.use(express.json({ limit: '5mb' }));
+    this.app.use(express.urlencoded({ limit: '5mb', extended: false }));
+
     this.app.use(morgan('combined', { write: logger.info }));
 
     this.app.use(compression());
@@ -47,17 +57,10 @@ class Server {
     this.app.disable('x-powered-by');
     this.app.use(cors());
 
-    this.app.use(express.json({ limit: '5mb' }));
-    this.app.use(express.urlencoded({ limit: '5mb', extended: false }));
-
     this.app.use('/static', express.static('./static'));
 
     this.app.use('/', new IndexController().router);
     this.app.use('/auth', new AuthController().router);
-
-    this.app.set('views', './views');
-    this.app.set('view engine', 'ejs');
-    this.app.set('trust proxy', true);
   }
 
   public start() {

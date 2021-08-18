@@ -2,7 +2,7 @@
 .DS_Store
 node_modules
 typings
-dist
+build
 npm-debug.log
 logs
 files
