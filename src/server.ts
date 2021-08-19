@@ -44,6 +44,6 @@ export default class Server {
 
   public async start(): Promise<void> {
     await this.app.listen(this.port);
-    logger.info(`서버 시작 완료 http://localhost:${this.port}/`);
+    logger.info(`${process.pid}번 서버 시작 완료 http://localhost:${this.port}/`);
   }
 }

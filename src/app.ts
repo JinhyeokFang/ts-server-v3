@@ -9,15 +9,13 @@ import processEnv from './modules/undefinedChecker';
 import logger from './modules/logger';
 import Server from './server';
 
-const numOfCPUs = os.cpus().length;
-
 dotenv.config();
-// .env로부터 설정 불러오기
-// 설정 불러오기에 실패하면 서버 종료
 
 if (!cluster.isWorker) {
-  logger.info(`${process.pid} Primary Process`);
+  logger.info(`${process.pid} Primary 프로세스 시작`);
 
+  const numOfCPUs = os.cpus().length;
+  const numOfServerProcesses = parseInt(processEnv('NUM_OF_PROCESSES'), 10) || numOfCPUs;
   try {
     Crypto.setKey(processEnv('KEY'));
     JWT.setKey(processEnv('KEY'));
@@ -30,9 +28,10 @@ if (!cluster.isWorker) {
     })();
   }
 
-  logger.info(`현재 컴퓨터의 코어 수는 ${numOfCPUs}개입니다. ${numOfCPUs}개의 프로세스를 생성합니다.`);
+  logger.info(`현재 컴퓨터의 코어 수는 ${numOfCPUs}개입니다.`);
+  logger.info(`프로세스를 ${numOfServerProcesses}개 생성합니다.`);
 
-  for (let i = 0; i < numOfCPUs; i += 1) {
+  for (let i = 0; i < numOfServerProcesses; i += 1) {
     cluster.fork();
   }
 
@@ -41,10 +40,8 @@ if (!cluster.isWorker) {
     cluster.fork();
   });
 } else {
-  logger.info(`${process.pid} Worker Process`);
-
   try {
-    logger.info(`${process.pid}번째 서버 시작 시도`);
+    logger.info(`${process.pid}번 서버 시작 시도`);
     new Server(parseInt(processEnv('PORT'), 10)).start();
   } catch (error) {
     (async () => {
