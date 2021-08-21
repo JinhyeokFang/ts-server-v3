@@ -4,8 +4,8 @@ import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 
-import IndexController from './controllers/Index/IndexController';
 import AuthController from './controllers/Auth/AuthController';
+// import PostController from './controllers/Post/PostController';
 import logger from './modules/logger';
 
 export default class Server {
@@ -38,8 +38,8 @@ export default class Server {
 
     this.app.use('/static', express.static('./static'));
 
-    this.app.use('/', new IndexController().router);
     this.app.use('/auth', new AuthController().router);
+    // this.app.use('/post', new PostController().router);
   }
 
   public async start(): Promise<void> {
