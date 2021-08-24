@@ -12,6 +12,8 @@ import JWT, { ITokenData } from '../../modules/JWT';
 import { imageUploader } from '../../modules/fileSave';
 
 export default class AuthController extends BaseController {
+  public baseURL = '/auth';
+
   public constructor() {
     super();
     this.router.post('/login', this.login);
