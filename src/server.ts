@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 
 import AuthController from './controllers/Auth/AuthController';
-// import PostController from './controllers/Post/PostController';
+import PostController from './controllers/Post/PostController';
 import logger from './modules/logger';
 
 export default class Server {
@@ -17,6 +17,7 @@ export default class Server {
     this.port = port;
     this.appConfigSet();
     this.appRouterSet();
+    this.appControllerSet();
   }
 
   private appConfigSet() {
@@ -37,9 +38,11 @@ export default class Server {
     this.app.use(cors());
 
     this.app.use('/static', express.static('./static'));
+  }
 
+  private appControllerSet() {
     this.app.use('/auth', new AuthController().router);
-    // this.app.use('/post', new PostController().router);
+    this.app.use('/post', new PostController().router);
   }
 
   public async start(): Promise<void> {

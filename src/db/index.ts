@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 import Logger from '../modules/logger';
 
 export default class DB {
+  private static errorCount = 1;
+
+  private static host = 'localhost';
+
+  private static dbport = 27017;
+
   /**
    * MongoDB와 서버를 연결
    * 연결에 실패하거나 종료될 시 재연결
@@ -10,12 +16,6 @@ export default class DB {
    * @param  {number} dbport
    * @param  {string} host
    */
-  private static errorCount = 1;
-
-  private static host = 'localhost';
-
-  private static dbport = 27017;
-
   public static initialize(dbname: string, dbport?: number, host?: string): void {
     if (dbport) this.dbport = dbport;
     if (host) this.host = host;
