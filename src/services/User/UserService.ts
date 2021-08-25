@@ -5,7 +5,7 @@
 
 import { NotFoundError, ConflictError, BadRequestError } from 'ts-response';
 import validator from 'validator';
-import { IUser, UserModel } from '../../db/models/User/UserModel';
+import { User, UserModel } from '../../db/models/User/UserModel';
 import Crypto from '../../modules/Crypto';
 import logger from '../../modules/logger';
 
@@ -112,9 +112,9 @@ export default class UserService {
    * 유저 프로필 불러오기
    * @param  {string} username
    * @param  {string} password
-   * @returns  {IUser}
+   * @returns  {User}
    */
-  public async getProfile(username: string): Promise<IUser> {
+  public async getProfile(username: string): Promise<User> {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,

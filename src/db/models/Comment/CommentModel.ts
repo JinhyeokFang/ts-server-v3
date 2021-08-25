@@ -2,10 +2,13 @@ import {
   Schema, model, Model, Document,
 } from 'mongoose';
 
-interface ICommentModel extends Document {
+class Comment extends Document {
   postId: string;
+
   username: string;
+
   content: string;
+
   date: Date;
 }
 
@@ -16,6 +19,6 @@ const commentSchema = new Schema({
   date: { type: String, required: true },
 });
 
-const CommentModel: Model<ICommentModel> = model('comment', commentSchema);
+const CommentModel: Model<Comment> = model('comment', commentSchema);
 
-export { CommentModel, ICommentModel };
+export { CommentModel, Comment };

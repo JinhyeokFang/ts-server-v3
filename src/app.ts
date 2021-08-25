@@ -30,7 +30,6 @@ if (!cluster.isWorker) {
 
   logger.info(`현재 컴퓨터의 코어 수는 ${numOfCPUs}개입니다.`);
   logger.info(`프로세스를 ${numOfServerProcesses}개 생성합니다.`);
-  logger.info(`서버 포트: ${this.port}`);
 
   for (let i = 0; i < numOfServerProcesses; i += 1) {
     cluster.fork();

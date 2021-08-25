@@ -2,10 +2,13 @@ import {
   Schema, model, Model, Document,
 } from 'mongoose';
 
-interface IPostModel extends Document {
+class Post extends Document {
   username: string;
+
   title: string;
+
   contents: string;
+
   date: Date;
 }
 
@@ -16,6 +19,6 @@ const postSchema = new Schema({
   date: { type: String, required: true },
 });
 
-const PostModel: Model<IPostModel> = model('post', postSchema);
+const PostModel: Model<Post> = model('post', postSchema);
 
-export { PostModel, IPostModel };
+export { PostModel, Post };

@@ -8,13 +8,16 @@ import AuthController from './controllers/Auth/AuthController';
 import PostController from './controllers/Post/PostController';
 import logger from './modules/logger';
 import BaseController from './controllers/BaseController';
+import DB from './db';
+import JWT from './modules/JWT';
+import Crypto from './modules/Crypto';
 
 export default class Server {
   private app = express();
 
   private port = 0;
 
-  constructor(port: number) {
+  constructor(port = 80) {
     this.port = port;
     this.appConfigSet();
     this.appRouterSet();
@@ -58,5 +61,16 @@ export default class Server {
   public async start(): Promise<void> {
     await this.app.listen(this.port);
     logger.info(`${process.pid}번 서버 시작 완료`);
+  }
+
+  public settingForTest(): Server {
+    Crypto.setKey('dev');
+    JWT.setKey('dev');
+    DB.initialize('dev', 27017);
+    return this;
+  }
+
+  public get rawServer(): Express.Application {
+    return this.app;
   }
 }

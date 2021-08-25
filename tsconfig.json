@@ -6,6 +6,8 @@
     "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "rootDir": "./src"
-  }
+    "rootDir": "./src",
+    "strictPropertyInitialization": false
+  },
+  "exclude": ["./**/*.test.ts"]
 }
