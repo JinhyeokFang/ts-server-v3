@@ -1,8 +1,10 @@
+import { IsEmail, IsString } from 'class-validator';
 import {
   Schema, model, Model, Document,
 } from 'mongoose';
 
 class User extends Document {
+  @IsEmail()
   username: string;
 
   profileImageURL: string;

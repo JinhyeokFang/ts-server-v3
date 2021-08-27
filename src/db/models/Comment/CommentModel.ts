@@ -1,12 +1,15 @@
+import { IsMongoId, IsString } from 'class-validator';
 import {
   Schema, model, Model, Document,
 } from 'mongoose';
 
 class Comment extends Document {
+  @IsMongoId()
   postId: string;
 
   username: string;
 
+  @IsString()
   content: string;
 
   date: Date;

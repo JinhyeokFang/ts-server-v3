@@ -17,7 +17,7 @@ export default class Server {
 
   private port = 0;
 
-  constructor(port = 80) {
+  constructor(port = 8080) {
     this.port = port;
     this.appConfigSet();
     this.appRouterSet();
@@ -60,9 +60,9 @@ export default class Server {
 
   public async start(): Promise<void> {
     await this.app.listen(this.port);
-    logger.info(`${process.pid}번 서버 시작 완료`);
   }
 
+  // TODO: test 파일로 옮길것
   public settingForTest(): Server {
     Crypto.setKey('dev');
     JWT.setKey('dev');

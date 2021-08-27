@@ -1,3 +1,4 @@
+import { IsString } from 'class-validator';
 import {
   Schema, model, Model, Document,
 } from 'mongoose';
@@ -5,8 +6,10 @@ import {
 class Post extends Document {
   username: string;
 
+  @IsString()
   title: string;
 
+  @IsString()
   contents: string;
 
   date: Date;
