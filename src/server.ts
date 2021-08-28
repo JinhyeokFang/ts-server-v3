@@ -8,9 +8,6 @@ import AuthController from './controllers/Auth/AuthController';
 import PostController from './controllers/Post/PostController';
 import logger from './modules/logger';
 import BaseController from './controllers/BaseController';
-import DB from './db';
-import JWT from './modules/JWT';
-import Crypto from './modules/Crypto';
 
 export default class Server {
   private app = express();
@@ -60,14 +57,6 @@ export default class Server {
 
   public async start(): Promise<void> {
     await this.app.listen(this.port);
-  }
-
-  // TODO: test 파일로 옮길것
-  public settingForTest(): Server {
-    Crypto.setKey('dev');
-    JWT.setKey('dev');
-    DB.initialize('dev', 27017);
-    return this;
   }
 
   public get rawServer(): Express.Application {
