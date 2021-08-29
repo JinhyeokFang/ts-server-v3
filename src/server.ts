@@ -6,6 +6,8 @@ import cors from 'cors';
 
 import AuthController from './controllers/Auth/AuthController';
 import PostController from './controllers/Post/PostController';
+import CommentController from './controllers/Comment/CommentController';
+
 import logger from './modules/logger';
 import BaseController from './controllers/BaseController';
 
@@ -21,6 +23,7 @@ export default class Server {
     this.appControllerSet([
       new AuthController(),
       new PostController(),
+      new CommentController(),
     ]);
   }
 
