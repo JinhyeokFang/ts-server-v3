@@ -5,7 +5,7 @@ export default async function checkValidate(object: Document): Promise<boolean> 
   try {
     await validate(object);
     return true;
-  } catch (err) {
+  } catch (error) {
     return false;
   }
 }

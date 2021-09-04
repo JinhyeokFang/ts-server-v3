@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import {
   errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError,
 } from 'ts-response';
 import path from 'path';
-import BaseController from '../BaseController';
+import { BaseController, RequestWithoutData } from '../BaseController';
 import {
   ILoginRequest, IRegisterRequest, IRefreshRequest, IRemoveRequest, IPatchProfileRequest,
 } from './AuthController.interface';
@@ -81,7 +81,7 @@ export default class AuthController extends BaseController {
     }
   }
 
-  private async getProfileImage(req: Request, res: Response): Promise<void> {
+  private async getProfileImage(req: RequestWithoutData, res: Response): Promise<void> {
     const { username } = res.locals;
 
     try {
