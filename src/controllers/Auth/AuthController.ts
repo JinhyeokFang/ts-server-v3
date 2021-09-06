@@ -25,6 +25,36 @@ export default class AuthController extends BaseController {
     this.router.put('/profile', imageUploader('profile'), this.patchProfile);
   }
 
+  /**
+ * @api {get} /auth/login Login
+ * @apiName Login
+ * @apiGroup Auth
+ *
+ * @apiParam {String} username 유저 아이디
+ * @apiParam {String} password 유저 패스워드
+ *
+ * @apiSuccess {String} accessToken
+ * @apiSuccess {String} refreshToken
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *        "success": true,
+ *        "data": {
+ *           "accessToken": "",
+ *           "refreshToken": ""
+ *        }
+ *     }
+ *
+ * @apiError 404 유저를 찾을 수 없습니다.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "success": false,
+ *       "error": "유저를 찾을 수 없습니다."
+ *     }
+ */
   private async login(req: ILoginRequest, res: Response): Promise<void> {
     const { username, password } = req.body;
 

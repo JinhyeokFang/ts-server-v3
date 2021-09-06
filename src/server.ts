@@ -9,7 +9,7 @@ import PostController from './controllers/Post/PostController';
 import CommentController from './controllers/Comment/CommentController';
 
 import logger from './modules/logger';
-import BaseController from './controllers/BaseController';
+import { BaseController } from './controllers/BaseController';
 
 export default class Server {
   private app = express();
@@ -44,7 +44,7 @@ export default class Server {
 
     // 미들웨어 설정
     this.app.use(compression());
-    this.app.use(helmet());
+    // this.app.use(helmet());
     this.app.use(cors());
     this.app.disable('x-powered-by');
 
