@@ -19,7 +19,7 @@ const postSchema = new Schema({
   username: { type: String, required: true },
   title: { type: String, required: true },
   contents: { type: String, required: true },
-  date: { type: String, required: true },
+  date: { type: String, required: true, default: Date.now },
 });
 
 const PostModel: Model<Post> = model('post', postSchema);

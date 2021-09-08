@@ -16,10 +16,10 @@ class Comment extends Document {
 }
 
 const commentSchema = new Schema({
-  postId: { type: String, required: true },
+  postId: { type: Schema.Types.ObjectId, ref: 'post', required: true },
   username: { type: String, required: true },
   content: { type: String, required: true },
-  date: { type: String, required: true },
+  date: { type: String, required: true, default: Date.now },
 });
 
 const CommentModel: Model<Comment> = model('comment', commentSchema);

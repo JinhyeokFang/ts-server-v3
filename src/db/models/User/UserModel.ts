@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail } from 'class-validator';
 import {
   Schema, model, Model, Document,
 } from 'mongoose';
@@ -19,7 +19,9 @@ interface UserWithPasswordAndSalt extends User {
 }
 
 const userSchema = new Schema({
-  username: { type: String, required: true },
+  username: {
+    type: String, required: true, unique: true, lowercase: true,
+  },
   profileImageURL: { type: String, required: true },
   password: { type: String, required: true },
   iv: { type: String, required: true },
