@@ -12,7 +12,7 @@ export default class DB {
    * @param  {number} dbport
    * @param  {string} host
    */
-  public static initialize(dbuser, dbpass, dbname, dbport, dbhost): void {
+  public static initialize(dbUser, dbPass, dbName, dbPort, dbHost): void {
     mongoose.connection.on('connected', () => {
       Logger.info('DB가 연결되었습니다.');
       this.errorCount = 1;
@@ -20,18 +20,19 @@ export default class DB {
 
     mongoose.connection.on('disconnected', () => {
       Logger.error('DB와의 연결이 중단되었습니다. 연결을 재시도합니다.');
-      this.connect(dbuser, dbpass, dbname, dbport, dbhost);
+      this.connect(dbUser, dbPass, dbName, dbPort, dbHost);
     });
 
-    this.connect(dbuser, dbpass, dbname, dbport, dbhost);
+    this.connect(dbUser, dbPass, dbName, dbPort, dbHost);
   }
 
-  private static async connect(dbuser: string, dbpass:string, dbname: string, dbport = 27017, dbhost = 'localhost'): Promise<void> {
+  private static async connect(dbUser: string, dbPass:string, dbName: string, dbPort = 27017, dbHost = 'localhost'): Promise<void> {
     try {
       if (this.errorCount > 1) Logger.info(`DB 연결 재시도, ${this.errorCount}번째`);
       else Logger.info('DB 연결 시도');
 
-      await mongoose.connect(`mongodb://${dbuser}:${dbpass}@${dbhost}:${dbport}/${dbname}`, {
+      await mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/admin`, {
+        dbName,
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
@@ -43,7 +44,7 @@ export default class DB {
         process.exit();
       }
       Logger.error('DB에서 에러가 발생했습니다. 연결을 재시도합니다.');
-      setTimeout(() => this.connect(dbuser, dbpass, dbname, dbport, dbhost), 10000);
+      setTimeout(() => this.connect(dbUser, dbPass, dbName, dbPort, dbHost), 10000);
     }
   }
 }
