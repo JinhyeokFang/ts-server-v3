@@ -26,6 +26,8 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   iv: { type: String, required: true },
   key: { type: String, required: true },
+}, {
+  timestamps: true
 });
 
 const UserModel: Model<UserWithPasswordAndSalt> = model('user', userSchema);

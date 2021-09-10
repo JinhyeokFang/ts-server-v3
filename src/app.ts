@@ -12,7 +12,7 @@ dotenv.config();
 try {
   Crypto.setKey(processEnv('KEY'));
   JWT.setKey(processEnv('KEY'));
-  DB.initialize(processEnv('DB_NAME'), parseInt(processEnv('DB_PORT'), 10), processEnv('DB_HOST'));
+  DB.initialize(processEnv('DB_USER'), processEnv('DB_PASS'), processEnv('DB_NAME'), parseInt(processEnv('DB_PORT'), 10), processEnv('DB_HOST'));
   new Server(parseInt(processEnv('PORT'), 10)).start();
 } catch (error) {
   (async () => {

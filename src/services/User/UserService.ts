@@ -37,7 +37,7 @@ export default class UserService {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,
-    });
+    }).lean();
     if (userInstance) {
       throw new ConflictError('이미 존재하는 유저입니다.');
     }
@@ -55,7 +55,7 @@ export default class UserService {
 
     const key: string = await Crypto.createKey();
     const encryptedPassword: string = await Crypto.hash(password, key);
-    const iv: Buffer = await Crypto.createIV();
+    const iv = await Crypto.createIV();
     await UserModel.create({
       username, password: encryptedPassword, key, iv, profileImageURL: 'default_profile.jpg',
     });
@@ -93,7 +93,7 @@ export default class UserService {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,
-    });
+    }).lean();
     if (!userInstance) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
@@ -105,7 +105,9 @@ export default class UserService {
     }
 
     // 삭제
-    userInstance.remove();
+    UserModel.deleteOne({
+      username
+    });
   }
 
   /**
@@ -119,6 +121,7 @@ export default class UserService {
     const userInstance = await UserModel.findOne({
       username,
     });
+
     if (!userInstance) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
@@ -136,7 +139,7 @@ export default class UserService {
     // 이미 존재하는 유저인지 확인
     const userInstance = await UserModel.findOne({
       username,
-    });
+    }).lean();
     if (!userInstance) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }

@@ -4,9 +4,6 @@ import {
 } from 'mongoose';
 
 class Comment extends Document {
-  @IsMongoId()
-  postId: string;
-
   username: string;
 
   @IsString()
@@ -16,10 +13,10 @@ class Comment extends Document {
 }
 
 const commentSchema = new Schema({
-  postId: { type: Schema.Types.ObjectId, ref: 'post', required: true },
   username: { type: String, required: true },
   content: { type: String, required: true },
-  date: { type: String, required: true, default: Date.now },
+}, {
+  timestamps: true
 });
 
 const CommentModel: Model<Comment> = model('comment', commentSchema);

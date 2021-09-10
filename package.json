@@ -4,7 +4,7 @@
   "description": "",
   "apidoc": {
     "title": "wow apidoc!",
-    "url" : "https://jinhyeokfang.xyz"
+    "url": "https://jinhyeokfang.xyz"
   },
   "main": "app.js",
   "dependencies": {
