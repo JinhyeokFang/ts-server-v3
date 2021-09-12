@@ -1,7 +1,6 @@
-import { Document } from 'mongoose';
 import { validate } from 'class-validator';
 
-export default async function checkValidate(object: Document): Promise<boolean> {
+export default async function checkValidate(object: Record<string, unknown>): Promise<boolean> {
   try {
     await validate(object);
     return true;

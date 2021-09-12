@@ -2,7 +2,9 @@
   "compilerOptions": {
     "outDir": "build",
     "module": "commonjs",
+    "sourceMap": true,
     "target": "es6",
+    "lib": ["ESNext"],
     "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": false,

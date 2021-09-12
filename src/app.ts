@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-import DB from './db';
+import { connectPrisma } from './db';
 import JWT from './modules/JWT';
 import Crypto from './modules/Crypto';
 import processEnv from './modules/undefinedChecker';
@@ -12,7 +12,7 @@ dotenv.config();
 try {
   Crypto.setKey(processEnv('KEY'));
   JWT.setKey(processEnv('KEY'));
-  DB.initialize(processEnv('DB_USER'), processEnv('DB_PASS'), processEnv('DB_NAME'), parseInt(processEnv('DB_PORT'), 10), processEnv('DB_HOST'));
+  connectPrisma();
   new Server(parseInt(processEnv('PORT'), 10)).start();
 } catch (error) {
   (async () => {

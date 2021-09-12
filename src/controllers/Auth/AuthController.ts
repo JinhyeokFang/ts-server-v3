@@ -116,7 +116,8 @@ export default class AuthController extends BaseController {
 
     try {
       const data = await UserService.getInstance().getProfile(username);
-      responseOKWithFile(res, path.join(__dirname, `../../../files/${data.profileImageURL}`));
+      console.dir(data);
+      responseOKWithFile(res, path.join(__dirname, `../../../files/${'idk'}`));
     } catch (error) {
       errorHandling(res, error);
     }

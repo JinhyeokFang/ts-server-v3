@@ -44,7 +44,7 @@ export default class Server {
 
     // 미들웨어 설정
     this.app.use(compression());
-    // this.app.use(helmet());
+    this.app.use(helmet());
     this.app.use(cors());
     this.app.disable('x-powered-by');
 
@@ -60,6 +60,7 @@ export default class Server {
 
   public async start(): Promise<void> {
     await this.app.listen(this.port);
+    logger.info('server started');
   }
 
   public get rawServer(): Express.Application {
