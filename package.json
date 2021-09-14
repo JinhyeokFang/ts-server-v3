@@ -11,7 +11,6 @@
     "@prisma/client": "^3.0.2",
     "apidoc": "^0.29.0",
     "bcrypt": "^5.0.1",
-    "class-validator": "^0.13.1",
     "compression": "^1.7.4",
     "connect-redis": "^6.0.0",
     "cors": "^2.8.5",
