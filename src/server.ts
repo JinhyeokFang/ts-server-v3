@@ -10,15 +10,17 @@ import CommentController from './controllers/Comment/CommentController';
 
 import logger from './modules/logger';
 import { BaseController } from './controllers/BaseController';
+import { randomUUID } from 'crypto';
 
 export default class Server {
   private app = express();
   private appInstance;
 
+  private id: string;
   private port = 0;
-  private keepAlive = true;
 
-  constructor(port = 8080) {
+  constructor(port = 3000) {
+    this.id = randomUUID();
     this.port = port;
     this.appConfigSet();
     this.appRouterSet();
@@ -37,7 +39,6 @@ export default class Server {
   }
 
   private appRouterSet() {
-    this.app.use(this.keepAliveMiddleware);
     // body parse
     this.app.use(express.json({ limit: '5mb' }));
     this.app.use(express.urlencoded({ limit: '5mb', extended: false }));
@@ -53,18 +54,17 @@ export default class Server {
 
     // 정적 파일 호스팅
     this.app.use('/static', express.static('./static'));
+    this.app.get('/uuid', (req, res) => {
+      res.json({
+        uuid: this.id
+      });
+    });
   }
 
   private appControllerSet(controllers: BaseController[]) {
     for (let i = 0; i < controllers.length; i += 1) { // Controller는 Heavy하기 때문에 반드시 인덱스로 접근
       this.app.use(controllers[i].baseURL, controllers[i].router);
     }
-  }
-
-  private keepAliveMiddleware(req: Request, res: Response, next: NextFunction): void {
-    if (!this.keepAlive)
-      res.set('Connection', 'close');
-    next();
   }
 
   public async start(): Promise<void> {

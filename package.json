@@ -55,14 +55,11 @@
     "start": "pm2 reload ecosystem.config.js",
     "build": "tsc",
     "deploy": "pm2 deploy ecosystem.config.js production",
-
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "test": "jest --setupFiles dotenv/config --forceExit --detectOpenHandles",
     "docs": "apidoc -i src/ -o docs/",
-
     "generate": "npx prisma generate",
     "studio": "npx prisma studio",
-
     "mongod": "sudo mongod --replSet 'rs0'"
   },
   "repository": {
