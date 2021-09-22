@@ -54,13 +54,16 @@
   },
   "scripts": {
     "build": "tsc",
+    "start": "pm2 reload ecosystem.config.js",
+
     "lint": "./node_modules/eslint/bin/eslint.js .",
-    "start": "node ./build/app.js",
     "test": "jest --setupFiles dotenv/config --forceExit --detectOpenHandles",
     "docs": "apidoc -i src/ -o docs/",
+
     "generate": "npx prisma generate",
     "studio": "npx prisma studio",
-    "initSoBad": "sudo mongod --replSet 'rs0'"
+
+    "mongod": "sudo mongod --replSet 'rs0'"
   },
   "repository": {
     "type": "git",

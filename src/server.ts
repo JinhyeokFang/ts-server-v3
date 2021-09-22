@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import compression from 'compression';
 import helmet from 'helmet';
@@ -13,8 +13,10 @@ import { BaseController } from './controllers/BaseController';
 
 export default class Server {
   private app = express();
+  private appInstance;
 
   private port = 0;
+  private keepAlive = true;
 
   constructor(port = 8080) {
     this.port = port;
@@ -35,6 +37,7 @@ export default class Server {
   }
 
   private appRouterSet() {
+    this.app.use(this.keepAliveMiddleware);
     // body parse
     this.app.use(express.json({ limit: '5mb' }));
     this.app.use(express.urlencoded({ limit: '5mb', extended: false }));
@@ -58,9 +61,22 @@ export default class Server {
     }
   }
 
+  private keepAliveMiddleware(req: Request, res: Response, next: NextFunction): void {
+    if (!this.keepAlive)
+      res.set('Connection', 'close');
+    next();
+  }
+
   public async start(): Promise<void> {
-    await this.app.listen(this.port);
+    this.appInstance = await this.app.listen(this.port);
+    if (process.send)
+      process.send('ready');
     logger.info('server started');
+  }
+
+  public async stop(): Promise<void> {
+    await this.appInstance.close();
+    logger.info('server closeed');
   }
 
   public get rawServer(): Express.Application {
