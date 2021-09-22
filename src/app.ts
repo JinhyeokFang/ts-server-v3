@@ -1,13 +1,9 @@
-import dotenv from 'dotenv';
-
 import Server from './server';
 import { connectPrisma } from './db';
 import JWT from './modules/JWT';
 import Crypto from './modules/Crypto';
 import processEnv from './modules/undefinedChecker';
 import logger from './modules/logger';
-
-dotenv.config();
 
 async function runApp() {
   try {

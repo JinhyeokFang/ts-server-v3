@@ -76,7 +76,7 @@ export default class Server {
 
   public async stop(): Promise<void> {
     await this.appInstance.close();
-    logger.info('server closeed');
+    logger.info('server closed');
   }
 
   public get rawServer(): Express.Application {
