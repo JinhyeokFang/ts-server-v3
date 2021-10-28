@@ -1,7 +1,7 @@
 import { NotFoundError, ConflictError, BadRequestError } from 'ts-response';
 import validator from 'validator';
 import { getClient } from '../../db';
-import Crypto from '../../modules/Crypto';
+import Bcrypt from '../../modules/Bcrypt';
 import logger from '../../modules/logger';
 import { UserPasswords, UserProfile } from './UserService.interface';
 
@@ -56,13 +56,12 @@ export default class UserService {
       throw new BadRequestError('잘못된 비밀번호입니다.');
     }
 
-    const key: string = await Crypto.createKey();
-    const encryptedPassword: string = await Crypto.hash(password, key);
+    const key: string = await Bcrypt.createKey();
+    const encryptedPassword: string = await Bcrypt.hash(password, key);
     await prismaClient.user.create({
       data: {
         email, 
         password: encryptedPassword,
-        key, 
         profileImageURL: 'default_profile.jpg',
       }
     });
@@ -82,7 +81,6 @@ export default class UserService {
         email
       },
       select: {
-        key: true,
         password: true
       }
     });
@@ -90,9 +88,8 @@ export default class UserService {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
 
-    // 입력한 비밀번호 해시화 후 비교
-    const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
-    if (encryptedPassword !== userInstance.password) {
+    const checkPassword: boolean = await Bcrypt.compare(password, userInstance.password);
+    if (!checkPassword) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
   }
@@ -111,17 +108,15 @@ export default class UserService {
         email
       },
       select: {
-        password: true,
-        key: true
+        password: true
       }
     });
     if (userInstance === null) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
 
-    // 입력한 비밀번호 해시화 후 비교
-    const encryptedPassword: string = await Crypto.hash(password, userInstance.key);
-    if (encryptedPassword !== userInstance.password) {
+    const checkPassword: boolean = await Bcrypt.compare(password, userInstance.password);
+    if (!checkPassword) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
 

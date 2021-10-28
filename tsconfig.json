@@ -10,7 +10,11 @@
     "noImplicitAny": false,
     "rootDir": "./src",
     "strictPropertyInitialization": false,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
   },
   "exclude": ["./**/*.test.ts"]
 }

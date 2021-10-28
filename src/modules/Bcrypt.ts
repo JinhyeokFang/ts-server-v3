@@ -3,6 +3,10 @@ import bcrypt from 'bcrypt';
 export default class Bcrypt {
   private static saltRounds = 10;
 
+  public static async compare(password: string, encryptedPassword: string): Promise<boolean> {
+    return await bcrypt.compare(password, encryptedPassword);
+  }
+
   public static async createKey(): Promise<string> {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(this.saltRounds, (err, salt) => {

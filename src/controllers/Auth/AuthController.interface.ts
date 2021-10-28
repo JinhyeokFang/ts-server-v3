@@ -22,9 +22,6 @@ export interface IRemoveRequest extends Request {
 }
 
 export interface IRefreshRequest extends Request {
-  body: {
-    refreshToken: string
-  }
 }
 
 export interface IPatchProfileRequest extends Request {

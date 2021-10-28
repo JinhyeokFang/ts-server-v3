@@ -4,6 +4,5 @@ export interface UserProfile {
 }
 
 export interface UserPasswords {
-    key: string,
     password: string
 }

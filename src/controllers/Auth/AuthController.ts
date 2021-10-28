@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import {
-  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError,
+  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError, UnauthorizedError,
 } from 'ts-response';
 import path from 'path';
 import { BaseController, RequestWithoutData } from '../BaseController';
@@ -10,6 +10,7 @@ import {
 import UserService from '../../services/User/UserService';
 import JWT, { ITokenData } from '../../modules/JWT';
 import { imageUploader } from '../../modules/fileSave';
+import logger from '../../modules/logger';
 
 export default class AuthController extends BaseController {
   public baseURL = '/auth';
@@ -61,10 +62,12 @@ export default class AuthController extends BaseController {
     try {
       await UserService.getInstance().loginUser(username, password);
 
+      req.session.refreshToken = await JWT.sign(false, username);
+      logger.info(req.session.refreshToken);
+
       responseOK(res, {
         data: {
-          accessToken: await JWT.sign(true, username),
-          refreshToken: await JWT.sign(false, username),
+          accessToken: await JWT.sign(true, username)
         },
       });
     } catch (error) {
@@ -95,15 +98,11 @@ export default class AuthController extends BaseController {
   }
 
   private async refresh(req: IRefreshRequest, res: Response): Promise<void> {
-    const { refreshToken } = req.body;
-
     try {
-      const tokenData: ITokenData = await JWT.verify(refreshToken);
-
-      if (tokenData.isAccessToken) {
-        throw new ConflictError('RefreshToken만 가능합니다.');
-      }
-
+      logger.info(req.session.refreshToken);
+      if (req.session.refreshToken === undefined || req.session.refreshToken === null)
+        throw new UnauthorizedError('RefreshToken이 만료되었습니다.');
+      const tokenData: ITokenData = await JWT.verify(req.session.refreshToken);
       const accessToken: string = await JWT.sign(false, tokenData.username);
       responseOK(res, { data: { accessToken } });
     } catch (error) {

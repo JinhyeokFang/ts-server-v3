@@ -29,6 +29,5 @@ model User {
   email             String  @unique
   password          String
   posts             Post[]
-  key               String
   profileImageURL   String
 }

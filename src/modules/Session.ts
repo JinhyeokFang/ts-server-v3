@@ -10,17 +10,7 @@ export default function initialize(app: Application,
   port: number, host: string, secret: string): void {
   app.use(session({
     secret,
-    httpOnly: true,
-    secure: true,
-    store: new RedisStore({
-      client: redis.createClient(port, host),
-      ttl: 200,
-    }),
     saveUninitialized: false,
     resave: false,
-    cookie: {
-      httpOnly: true,
-      secure: true,
-    },
   }));
 }

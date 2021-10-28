@@ -11,6 +11,8 @@ import CommentController from './controllers/Comment/CommentController';
 import logger from './modules/logger';
 import { BaseController } from './controllers/BaseController';
 import { randomUUID } from 'crypto';
+import initialize from './modules/Session';
+import processEnv from './modules/undefinedChecker';
 
 export default class Server {
   private app = express();
@@ -22,6 +24,7 @@ export default class Server {
   constructor(port = 3000) {
     this.id = randomUUID();
     this.port = port;
+    initialize(this.app, 6379, 'localhost', processEnv('KEY'));
     this.appConfigSet();
     this.appRouterSet();
     this.appControllerSet([
