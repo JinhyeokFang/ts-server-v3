@@ -15,10 +15,6 @@ services:
     build: .
     ports:
       - "80:80"
-    environment:
-      - NODE_PATH=src
-      - DB_HOST=mongo
-      - DB=dbdb
     networks:
       - backend
     depends_on:
