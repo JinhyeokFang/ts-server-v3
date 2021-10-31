@@ -22,6 +22,7 @@ export interface IRemoveRequest extends Request {
 }
 
 export interface IRefreshRequest extends Request {
+  body: Record<string, unknown>
 }
 
 export interface IPatchProfileRequest extends Request {

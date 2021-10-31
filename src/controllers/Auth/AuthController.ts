@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import {
-  errorHandling, responseOK, ConflictError, responseOKWithFile, BadRequestError, UnauthorizedError,
+  errorHandling, responseOK, responseOKWithFile, BadRequestError, UnauthorizedError,
 } from 'ts-response';
 import path from 'path';
 import { BaseController, RequestWithoutData } from '../BaseController';
@@ -67,7 +67,7 @@ export default class AuthController extends BaseController {
 
       responseOK(res, {
         data: {
-          accessToken: await JWT.sign(true, username)
+          accessToken: await JWT.sign(true, username),
         },
       });
     } catch (error) {
@@ -100,8 +100,9 @@ export default class AuthController extends BaseController {
   private async refresh(req: IRefreshRequest, res: Response): Promise<void> {
     try {
       logger.info(req.session.refreshToken);
-      if (req.session.refreshToken === undefined || req.session.refreshToken === null)
+      if (req.session.refreshToken === undefined || req.session.refreshToken === null) {
         throw new UnauthorizedError('RefreshToken이 만료되었습니다.');
+      }
       const tokenData: ITokenData = await JWT.verify(req.session.refreshToken);
       const accessToken: string = await JWT.sign(false, tokenData.username);
       responseOK(res, { data: { accessToken } });
@@ -115,7 +116,6 @@ export default class AuthController extends BaseController {
 
     try {
       const data = await UserService.getInstance().getProfile(username);
-      console.dir(data);
       responseOKWithFile(res, path.join(__dirname, `../../../files/${'idk'}`));
     } catch (error) {
       errorHandling(res, error);

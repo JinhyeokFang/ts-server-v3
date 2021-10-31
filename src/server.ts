@@ -4,21 +4,23 @@ import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 
+import { randomUUID } from 'crypto';
 import AuthController from './controllers/Auth/AuthController';
 import PostController from './controllers/Post/PostController';
 import CommentController from './controllers/Comment/CommentController';
 
 import logger from './modules/logger';
 import { BaseController } from './controllers/BaseController';
-import { randomUUID } from 'crypto';
 import initialize from './modules/Session';
 import processEnv from './modules/undefinedChecker';
 
 export default class Server {
   private app = express();
+
   private appInstance;
 
   private id: string;
+
   private port = 0;
 
   constructor(port = 3000) {
@@ -59,7 +61,7 @@ export default class Server {
     this.app.use('/static', express.static('./static'));
     this.app.get('/uuid', (req, res) => {
       res.json({
-        uuid: this.id
+        uuid: this.id,
       });
     });
   }
@@ -72,8 +74,7 @@ export default class Server {
 
   public async start(): Promise<void> {
     this.appInstance = await this.app.listen(this.port);
-    if (process.send)
-      process.send('ready');
+    if (process.send) process.send('ready');
     logger.info('server started');
   }
 

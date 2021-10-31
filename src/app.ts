@@ -10,7 +10,7 @@ async function runApp() {
     Crypto.setKey(processEnv('KEY'));
     JWT.setKey(processEnv('KEY'));
     connectPrisma();
-  
+
     const server = await new Server(parseInt(processEnv('PORT'), 10));
     server.start();
     process.on('SIGINT', async () => {

@@ -4,7 +4,7 @@ export default class Bcrypt {
   private static saltRounds = 10;
 
   public static async compare(password: string, encryptedPassword: string): Promise<boolean> {
-    return await bcrypt.compare(password, encryptedPassword);
+    return bcrypt.compare(password, encryptedPassword);
   }
 
   public static async createKey(): Promise<string> {

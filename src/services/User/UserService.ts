@@ -32,13 +32,13 @@ export default class UserService {
   public async createUser(email: string, password: string): Promise<void> {
     // 이미 존재하는 유저인지 확인
     const prismaClient = getClient();
-    const userInstance: {} | null = await prismaClient.user.findFirst({
+    const userInstance: Record<string, unknown> | null = await prismaClient.user.findFirst({
       where: {
-        email
+        email,
       },
       select: {
-        email: true
-      }
+        email: true,
+      },
     });
     if (userInstance !== null) {
       throw new ConflictError('유저가 이미 존재합니다.');
@@ -47,11 +47,11 @@ export default class UserService {
       throw new BadRequestError('username은 이메일만 가능합니다.');
     }
     if (!validator.isStrongPassword(password, {
-        minLength: 8,
-        minUppercase: 0,
-        minNumbers: 1,
-        minSymbols: 0,
-      })
+      minLength: 8,
+      minUppercase: 0,
+      minNumbers: 1,
+      minSymbols: 0,
+    })
     ) {
       throw new BadRequestError('잘못된 비밀번호입니다.');
     }
@@ -60,10 +60,10 @@ export default class UserService {
     const encryptedPassword: string = await Bcrypt.hash(password, key);
     await prismaClient.user.create({
       data: {
-        email, 
+        email,
         password: encryptedPassword,
         profileImageURL: 'default_profile.jpg',
-      }
+      },
     });
   }
 
@@ -78,11 +78,11 @@ export default class UserService {
     const prismaClient = getClient();
     const userInstance: UserPasswords | null = await prismaClient.user.findFirst({
       where: {
-        email
+        email,
       },
       select: {
-        password: true
-      }
+        password: true,
+      },
     });
     if (userInstance === null) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
@@ -105,11 +105,11 @@ export default class UserService {
     const prismaClient = getClient();
     const userInstance: UserPasswords | null = await prismaClient.user.findFirst({
       where: {
-        email
+        email,
       },
       select: {
-        password: true
-      }
+        password: true,
+      },
     });
     if (userInstance === null) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
@@ -122,8 +122,8 @@ export default class UserService {
 
     await prismaClient.user.delete({
       where: {
-        email
-      }
+        email,
+      },
     });
   }
 
@@ -138,12 +138,12 @@ export default class UserService {
     const prismaClient = getClient();
     const userInstance: UserProfile | null = await prismaClient.user.findFirst({
       where: {
-        email
+        email,
       },
       select: {
         email: true,
-        profileImageURL: true
-      }
+        profileImageURL: true,
+      },
     });
     if (userInstance === null) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
@@ -161,24 +161,24 @@ export default class UserService {
   public async setProfileImage(email: string, filename: string): Promise<void> {
     // 이미 존재하는 유저인지 확인
     const prismaClient = getClient();
-    const userInstance: {} | null = await prismaClient.user.findFirst({
+    const userInstance: Record<string, unknown> | null = await prismaClient.user.findFirst({
       where: {
-        email
+        email,
       },
       select: {
-        email: true
-      }
+        email: true,
+      },
     });
     if (userInstance === null) {
       throw new NotFoundError('유저를 찾을 수 없습니다.');
     }
-    await prismaClient.user.update({ 
+    await prismaClient.user.update({
       where: {
-        email
+        email,
       },
       data: {
-        profileImageURL: filename 
-      } 
+        profileImageURL: filename,
+      },
     });
   }
 }

@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 import logger from '../modules/logger';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export async function connectPrisma() {
   try {
