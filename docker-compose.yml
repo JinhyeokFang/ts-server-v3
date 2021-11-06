@@ -1,28 +1,37 @@
-version: "3.5"
+version: "3.8"
 services:
-  mongodb:
-    container_name: db
-    image: mongo
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: unless-stopped
     ports:
-      - "27017:27017"
-    volumes:
-      - mongo:/data/db
+      - "3306:3306"
     networks:
       - backend
+    environment:
+      - MYSQL_USER=username
+      - MYSQL_DATABASE=db
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - TZ=Asia/Seoul
+    volumes:
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
 
   server:
     container_name: web_server
     build: .
+    restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:8080"
     networks:
       - backend
     depends_on:
-      - mongodb
+      - mysql
+    stdin_open: true
+    tty: true
 
 networks:
   backend:
     driver: bridge
-
-volumes:
-  mongo:

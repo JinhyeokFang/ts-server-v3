@@ -5,6 +5,7 @@ RUN mkdir -p /data/db
 WORKDIR /app
 ADD . /app
 RUN npm install
+RUN npx prisma generate
 RUN npm run build
 
 ENV NODE_ENV development
