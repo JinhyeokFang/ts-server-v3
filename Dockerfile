@@ -10,6 +10,6 @@ RUN npm run build
 
 ENV NODE_ENV development
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD ["npm", "start"]
