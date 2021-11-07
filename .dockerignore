@@ -8,6 +8,4 @@ logs
 files
 todo
 docs
-.env
-ecosystem.config.js
 prisma/migrations
