@@ -4,7 +4,7 @@ import logger from '../modules/logger';
 const prisma = new PrismaClient();
 
 function delay(time: number): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => resolve(), time);
   });
 }
