@@ -61,6 +61,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "test": "exit",
     "docs": "apidoc -i src/ -o docs/",
+    "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",
     "studio": "npx prisma studio",
     "mongod": "sudo mongod --replSet 'rs0'",
